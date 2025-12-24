@@ -1,0 +1,21 @@
+# fastapi
+# uvicorn
+# pymongo
+# python-dotenv
+# python-jose
+# passlib[bcrypt]
+# redis
+# razorpay
+# pydantic[email]
+
+
+fastapi
+uvicorn
+pymongo
+python-dotenv
+passlib[bcrypt]
+python-jose
+redis
+razorpay
+python-multipart
+pydantic[email]
