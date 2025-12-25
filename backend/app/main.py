@@ -11,10 +11,15 @@ from app.routes import (
 from app.config import FRONTEND_URL
 app = FastAPI(title="SB Tiffin Backend")
 
+# ✅ CORS FIX (REQUIRED)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
-    allow_credentials=True
+    allow_origins=[
+        "http://localhost:5173",  # Vite dev server
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],        # GET, POST, PUT, DELETE, OPTIONS
+    allow_headers=["*"],        # Content-Type, Authorization
 )
 
 app.include_router(auth_routes.router)
