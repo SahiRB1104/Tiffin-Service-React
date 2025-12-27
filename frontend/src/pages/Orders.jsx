@@ -7,6 +7,9 @@ export const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
 
+  /* ----------------------------------------
+     Fetch orders from backend
+     ---------------------------------------- */
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -22,29 +25,59 @@ export const Orders = () => {
     fetchOrders();
   }, []);
 
+  /* ----------------------------------------
+     FIX 1️⃣: Stable Order Number Generation
+     ❌ Earlier: index-based → breaks on sorting
+     ✅ Now: based on created_at (oldest = ORD-0001)
+     ---------------------------------------- */
+  const ordersWithOrderNo = useMemo(() => {
+    const byCreatedAsc = [...orders].sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() -
+        new Date(b.created_at).getTime()
+    );
+
+    return byCreatedAsc.map((o, i) => ({
+      ...o,
+      orderNo: `ORD-${String(i + 1).padStart(4, "0")}`,
+    }));
+  }, [orders]);
+
+  /* ----------------------------------------
+     Sorting logic (UI unchanged)
+     ---------------------------------------- */
   const sortedOrders = useMemo(() => {
-    return [...orders].sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return (
+    const list = [...ordersWithOrderNo];
+
+    switch (sortBy) {
+      case "newest":
+        return list.sort(
+          (a, b) =>
             new Date(b.created_at).getTime() -
             new Date(a.created_at).getTime()
-          );
-        case "oldest":
-          return (
+        );
+      case "oldest":
+        return list.sort(
+          (a, b) =>
             new Date(a.created_at).getTime() -
             new Date(b.created_at).getTime()
-          );
-        case "highest":
-          return b.total_amount - a.total_amount;
-        case "lowest":
-          return a.total_amount - b.total_amount;
-        default:
-          return 0;
-      }
-    });
-  }, [orders, sortBy]);
+        );
+      case "highest":
+        return list.sort(
+          (a, b) => b.total_amount - a.total_amount
+        );
+      case "lowest":
+        return list.sort(
+          (a, b) => a.total_amount - b.total_amount
+        );
+      default:
+        return list;
+    }
+  }, [ordersWithOrderNo, sortBy]);
 
+  /* ----------------------------------------
+     Loading skeleton (unchanged)
+     ---------------------------------------- */
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-6">
@@ -97,50 +130,48 @@ export const Orders = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedOrders.map((o, index) => {
-            const orderId =
-              o._id ?? o.id ?? `ORDER-${index}`;
+          {sortedOrders.map((o) => (
+            <div
+              key={o.orderNo}
+              className="bg-white p-6 rounded-2xl border border-slate-100 flex justify-between items-center shadow-sm transition-all hover:shadow-md hover:border-amber-100"
+            >
+              <div>
+                {/* FIX 2️⃣: Stable Order Number */}
+                <p className="font-bold text-slate-800">
+                  Order #{o.orderNo}
+                </p>
 
-            return (
-              <div
-                key={orderId}
-                className="bg-white p-6 rounded-2xl border border-slate-100 flex justify-between items-center shadow-sm transition-all hover:shadow-md hover:border-amber-100"
-              >
-                <div>
-                  <p className="font-bold text-slate-800">
-                    Order #{orderId.toString().slice(-6).toUpperCase()}
-                  </p>
-                  <p className="text-sm text-slate-500 font-medium">
-                    {new Date(o.created_at).toLocaleDateString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-amber-600 font-bold block text-lg">
-                    ₹{o.total_amount}
-                  </span>
-                    <span
-                      className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mt-1 ${
-                        o.status === "PLACED"
-                          ? "bg-blue-50 text-blue-600"
-                          : o.status === "PREPARING"
-                          ? "bg-yellow-50 text-yellow-700"
-                          : "bg-green-50 text-green-600"
-                      }`}
-                    >
-                      {o.status}
-                    </span>
-
-                </div>
+                {/* FIX 3️⃣: Correct UTC → Local Time */}
+                <p className="text-sm text-slate-500 font-medium">
+                  {new Date(o.created_at + "Z").toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </p>
               </div>
-            );
-          })}
+
+              <div className="text-right">
+                <span className="text-amber-600 font-bold block text-lg">
+                  ₹{o.total_amount}
+                </span>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mt-1 ${
+                    o.status === "PLACED"
+                      ? "bg-blue-50 text-blue-600"
+                      : o.status === "PREPARING"
+                      ? "bg-yellow-50 text-yellow-700"
+                      : "bg-green-50 text-green-600"
+                  }`}
+                >
+                  {o.status}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
