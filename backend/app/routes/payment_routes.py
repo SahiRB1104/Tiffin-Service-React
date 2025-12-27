@@ -37,10 +37,25 @@ def dummy_checkout(
 
     order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
 
+    # ✅ SNAPSHOT ORDER ITEMS (IMPORTANT FIX)
+    order_items = []
+    for item in data.items:
+        item_dict = item.model_dump()
+
+        order_items.append({
+            "id": item_dict.get("id"),
+            "name": item_dict["name"],
+            "price": item_dict["price"],
+            "quantity": item_dict["quantity"],
+
+            # 🔑 CRITICAL: persist image snapshot
+            "image_url": item_dict.get("image_url"),
+        })
+
     order = {
         "order_id": order_id,
         "user_email": user["email"],
-        "items": [item.model_dump() for item in data.items],
+        "items": order_items,
         "total_amount": data.total_amount,
         "payment_gateway": "DUMMY",
         "payment_status": "SUCCESS",

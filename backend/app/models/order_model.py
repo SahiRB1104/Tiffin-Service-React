@@ -3,9 +3,11 @@ from typing import List, Optional
 
 
 class OrderItem(BaseModel):
+    id: str
     name: str
-    quantity: int = Field(..., gt=0)
-    price: float = Field(..., gt=0)
+    price: float
+    quantity: int
+    image_url: Optional[str] = None
 
 
 class OrderCreate(BaseModel):
