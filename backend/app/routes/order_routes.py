@@ -32,36 +32,61 @@ def get_my_orders(user=Depends(get_current_user)):
     }
 
 
-@router.post("/checkout")
-def place_order(payload: dict, user=Depends(get_current_user)):
-    """
-    Creates a new order after successful payment.
-    """
+@router.get("/{order_id}")
+def get_order_details(order_id: str, user=Depends(get_current_user)):
+    order = orders_col.find_one(
+        {
+            "order_id": order_id,
+            "user_email": user["email"]
+        },
+        {"_id": 0}
+    )
 
-    if not payload.get("items"):
-        raise HTTPException(status_code=400, detail="Cart is empty")
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
 
-    if payload.get("payment_status") != "SUCCESS":
-        raise HTTPException(status_code=402, detail="Payment failed")
+    return order
 
-    order = {
-        "order_id": generate_order_id(),
-        "user_email": user["email"],
-        "items": payload["items"],
-        "total_amount": payload["total_amount"],
-        "payment_method": payload.get("payment_method", "unknown"),
-        "status": "PLACED",  # 🔁 lifecycle start
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow(),
-    }
+@router.post("/{order_id}/cancel")
+def cancel_order(
+    order_id: str,
+    payload: dict,
+    user=Depends(get_current_user)
+):
+    reason = payload.get("reason")
 
-    orders_col.insert_one(order)
+    if not reason:
+        raise HTTPException(status_code=400, detail="Cancel reason required")
 
-    return {
-        "message": "Order placed successfully",
-        "order_id": order["order_id"],
-        "status": order["status"],
-    }
+    order = orders_col.find_one(
+        {
+            "order_id": order_id,
+            "user_email": user["email"]
+        }
+    )
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if order["status"] != "PLACED":
+        raise HTTPException(
+            status_code=400,
+            detail="Order cannot be cancelled at this stage"
+        )
+
+    orders_col.update_one(
+        {"order_id": order_id},
+        {
+            "$set": {
+                "status": "CANCELLED",
+                "cancel_reason": reason,
+                "updated_at": datetime.utcnow(),
+            }
+        }
+    )
+
+    return {"message": "Order cancelled successfully"}
+
 
 
 @router.put("/{order_id}/status")
@@ -93,3 +118,4 @@ def update_order_status(
         raise HTTPException(status_code=404, detail="Order not found")
 
     return {"message": "Order status updated", "status": new_status}
+
