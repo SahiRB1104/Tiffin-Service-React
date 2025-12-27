@@ -125,9 +125,18 @@ export const Orders = () => {
                   <span className="text-amber-600 font-bold block text-lg">
                     ₹{o.total_amount}
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-green-600 bg-green-50 px-2 py-1 rounded inline-block mt-1">
-                    Delivered
-                  </span>
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mt-1 ${
+                        o.status === "PLACED"
+                          ? "bg-blue-50 text-blue-600"
+                          : o.status === "PREPARING"
+                          ? "bg-yellow-50 text-yellow-700"
+                          : "bg-green-50 text-green-600"
+                      }`}
+                    >
+                      {o.status}
+                    </span>
+
                 </div>
               </div>
             );

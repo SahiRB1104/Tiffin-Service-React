@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
-/* ---------- COMPONENTS ---------- */
+/* COMPONENTS */
 import { Header } from "./components/Header";
 import { CartSidebar } from "./components/CartSidebar";
 import { Sidebar } from "./components/Sidebar";
 import { MobileNav } from "./components/MobileNav";
 
-/* ---------- PAGES ---------- */
+/* PAGES */
 import { Home } from "./pages/Home";
 import { Menu } from "./pages/Menu";
 import { Login } from "./pages/Login";
@@ -19,11 +19,11 @@ import { Payment } from "./pages/Payment";
 import { Profile } from "./pages/Profile";
 import { Review } from "./pages/Review";
 import { Orders } from "./pages/Orders";
+import { OrderSuccess } from "./pages/OrderSuccess";
 
-/* ---------- AUTH ---------- */
+/* AUTH */
 import { useAuth } from "./auth/AuthContext";
 
-/* ---------- PROTECTED ROUTE ---------- */
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   if (loading) return null;
@@ -33,17 +33,21 @@ const ProtectedRoute = ({ children }) => {
 const App = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isDashboard = location.pathname.startsWith("/dashboard");
 
+  const handleCheckout = () => {
+    setIsCartOpen(false);
+    navigate("/payment");
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* DESKTOP HEADER */}
       <div className="hidden md:block">
         <Header onOpenCart={() => setIsCartOpen(true)} />
       </div>
 
-      {/* MOBILE HEADER */}
       <div className="md:hidden">
         <MobileNav onOpenCart={() => setIsCartOpen(true)} />
       </div>
@@ -67,44 +71,29 @@ const App = () => {
 
             <Route
               path="/dashboard/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Profile /></ProtectedRoute>}
             />
             <Route
               path="/dashboard/orders"
-              element={
-                <ProtectedRoute>
-                  <Orders />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Orders /></ProtectedRoute>}
             />
             <Route
               path="/dashboard/address"
-              element={
-                <ProtectedRoute>
-                  <Address />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Address /></ProtectedRoute>}
             />
             <Route
               path="/dashboard/review"
-              element={
-                <ProtectedRoute>
-                  <Review />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Review /></ProtectedRoute>}
             />
 
             <Route
               path="/payment"
-              element={
-                <ProtectedRoute>
-                  <Payment />
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute><Payment /></ProtectedRoute>}
+            />
+
+            <Route
+              path="/orders/success"
+              element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>}
             />
 
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -115,6 +104,7 @@ const App = () => {
       <CartSidebar
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
+        onCheckout={handleCheckout}
       />
     </div>
   );
