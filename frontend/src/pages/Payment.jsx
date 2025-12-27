@@ -19,7 +19,7 @@ export const Payment = () => {
     setError("");
 
     try {
-      await api.post("/orders/checkout", {
+      await api.post("/payment/checkout", {
         items: cart,
         total_amount: total,
         payment_method: method,

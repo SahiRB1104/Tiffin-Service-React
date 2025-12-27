@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ArrowUpDown, Package } from "lucide-react";
 import { api } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 export const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
+
+  const navigate = useNavigate();
 
   /* ----------------------------------------
      Fetch orders from backend
@@ -26,9 +29,7 @@ export const Orders = () => {
   }, []);
 
   /* ----------------------------------------
-     FIX 1️⃣: Stable Order Number Generation
-     ❌ Earlier: index-based → breaks on sorting
-     ✅ Now: based on created_at (oldest = ORD-0001)
+     Stable Order Number (UI neutral)
      ---------------------------------------- */
   const ordersWithOrderNo = useMemo(() => {
     const byCreatedAsc = [...orders].sort(
@@ -44,7 +45,7 @@ export const Orders = () => {
   }, [orders]);
 
   /* ----------------------------------------
-     Sorting logic (UI unchanged)
+     Sorting logic (unchanged UI)
      ---------------------------------------- */
   const sortedOrders = useMemo(() => {
     const list = [...ordersWithOrderNo];
@@ -130,48 +131,56 @@ export const Orders = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedOrders.map((o) => (
-            <div
-              key={o.orderNo}
-              className="bg-white p-6 rounded-2xl border border-slate-100 flex justify-between items-center shadow-sm transition-all hover:shadow-md hover:border-amber-100"
-            >
-              <div>
-                {/* FIX 2️⃣: Stable Order Number */}
-                <p className="font-bold text-slate-800">
-                  Order #{o.orderNo}
-                </p>
+          {sortedOrders.map((o) => {
+            /* 🛡 SAFETY: prevent /orders/undefined */
+            if (!o.order_id) return null;
 
-                {/* FIX 3️⃣: Correct UTC → Local Time */}
-                <p className="text-sm text-slate-500 font-medium">
-                  {new Date(o.created_at + "Z").toLocaleString(undefined, {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </p>
-              </div>
+            return (
+              <div
+                key={o.order_id}
+                onClick={() =>
+                  navigate(`/dashboard/orders/${o.order_id}`)
+                }
+                className="bg-white p-6 rounded-2xl border border-slate-100 flex justify-between items-center shadow-sm transition-all hover:shadow-md hover:border-amber-100 cursor-pointer"
+              >
+                <div>
+                  <p className="font-bold text-slate-800">
+                    Order #{o.orderNo}
+                  </p>
 
-              <div className="text-right">
-                <span className="text-amber-600 font-bold block text-lg">
-                  ₹{o.total_amount}
-                </span>
-                <span
-                  className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mt-1 ${
-                    o.status === "PLACED"
-                      ? "bg-blue-50 text-blue-600"
-                      : o.status === "PREPARING"
-                      ? "bg-yellow-50 text-yellow-700"
-                      : "bg-green-50 text-green-600"
-                  }`}
-                >
-                  {o.status}
-                </span>
+                  <p className="text-sm text-slate-500 font-medium">
+                    {new Date(o.created_at + "Z").toLocaleString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-amber-600 font-bold block text-lg">
+                    ₹{o.total_amount}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block mt-1 ${
+                      o.status === "PLACED"
+                        ? "bg-blue-50 text-blue-600"
+                        : o.status === "PREPARING"
+                        ? "bg-yellow-50 text-yellow-700"
+                        : o.status === "CANCELLED"
+                        ? "bg-red-50 text-red-600"
+                        : "bg-green-50 text-green-600"
+                    }`}
+                  >
+                    {o.status.replace(/_/g, " ")}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -20,6 +20,8 @@ import { Profile } from "./pages/Profile";
 import { Review } from "./pages/Review";
 import { Orders } from "./pages/Orders";
 import { OrderSuccess } from "./pages/OrderSuccess";
+import { OrderDetails } from "./pages/OrderDetails";
+
 
 /* AUTH */
 import { useAuth } from "./auth/AuthContext";
@@ -94,6 +96,15 @@ const App = () => {
             <Route
               path="/orders/success"
               element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>}
+            />
+            
+            <Route
+              path="/dashboard/orders/:orderId"
+              element={
+                <ProtectedRoute>
+                  <OrderDetails />
+                </ProtectedRoute>
+              }
             />
 
             <Route path="*" element={<Navigate to="/" replace />} />
