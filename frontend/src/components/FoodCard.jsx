@@ -8,14 +8,12 @@ export const FoodCard = ({ item }) => {
   return (
     <div className="group bg-slate-50 rounded-3xl overflow-hidden border border-slate-100 transition-all hover:shadow-2xl hover:shadow-slate-200 hover:-translate-y-1">
       <div className="relative h-56 overflow-hidden">
-        <img
-          src={
-            item.image_url ||
-            "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500&q=80"
-          }
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          alt={item.name}
-        />
+      <img
+        src={`/${item.img}`}
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        alt={item.name}
+      />
+
 
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-800 shadow-sm">
           {item.category}

@@ -8,6 +8,7 @@ import { MobileNav } from "./components/MobileNav";
 
 /* ---------- PAGES ---------- */
 import { Home } from "./pages/Home";
+import { Menu } from "./pages/Menu";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { About } from "./pages/About";
@@ -31,9 +32,7 @@ const App = () => {
   const { cart, total, clearCart } = useCart();
 
   const protectedViews = ["profile", "orders", "address", "review", "payment"];
-  const isDashboard = ["profile", "orders", "address", "review"].includes(
-    currentView
-  );
+  const isDashboard = ["profile", "address", "review"].includes(currentView);
 
   useEffect(() => {
     if (!loading && !isAuthenticated && protectedViews.includes(currentView)) {
@@ -101,7 +100,8 @@ const App = () => {
           {currentView === "home" && (
             <Home onExplore={() => setCurrentView("menu")} />
           )}
-          {currentView === "menu" && <Home />}
+          
+          {currentView === "menu" && <Menu />}
           {currentView === "login" && (
             <div className="flex items-center justify-center min-h-[calc(100vh-128px)] px-4">
               <Login
