@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from app.routes import (
     auth_routes,
     user_routes,
@@ -28,6 +30,13 @@ app.include_router(menu_routes.router)
 app.include_router(order_routes.router)
 app.include_router(payment_routes.router)
 app.include_router(review_routes.router)
+
+# ✅ Serve static files
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static"
+)
 
 @app.get("/")
 def root():
