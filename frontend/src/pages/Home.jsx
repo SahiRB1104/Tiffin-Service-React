@@ -8,8 +8,11 @@ import {
 } from "lucide-react";
 import { FoodCard } from "../components/FoodCard";
 import { api } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
-export const Home = ({ onExplore }) => {
+export const Home = () => {
+  const navigate = useNavigate();
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,7 +58,7 @@ export const Home = ({ onExplore }) => {
 
             <div className="flex gap-4 justify-center lg:justify-start">
               <button
-                onClick={onExplore}
+                onClick={() => navigate("/menu")}
                 className="bg-amber-500 text-white px-8 py-4 rounded-2xl font-bold shadow-xl flex items-center gap-2 transition-all hover:bg-amber-600 active:scale-95"
               >
                 Order Now <ChevronRight size={20} />

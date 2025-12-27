@@ -2,13 +2,20 @@ import React, { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { api } from "../api/api";
 import { useAuth } from "../auth/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export const Login = ({ onSuccess, onToggle }) => {
+export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from =
+    location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +30,7 @@ export const Login = ({ onSuccess, onToggle }) => {
 
       if (data.access_token) {
         login(data.access_token);
-        onSuccess();
+        navigate(from, { replace: true });
       } else {
         setError("Unexpected response from server");
       }
@@ -36,7 +43,9 @@ export const Login = ({ onSuccess, onToggle }) => {
 
   return (
     <div className="max-w-md w-full mx-auto bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100">
-      <h2 className="text-2xl font-bold mb-2">Welcome Back</h2>
+      <h2 className="text-2xl font-bold mb-2">
+        Welcome Back
+      </h2>
       <p className="text-slate-500 mb-8 text-sm">
         Login to your account to order your next meal.
       </p>
@@ -85,10 +94,11 @@ export const Login = ({ onSuccess, onToggle }) => {
       </form>
 
       <button
-        onClick={onToggle}
+        onClick={() => navigate("/signup")}
         className="mt-6 text-slate-500 w-full text-center hover:text-amber-500 transition-colors"
       >
-        Don't have an account? <span className="font-bold">Sign up</span>
+        Don't have an account?{" "}
+        <span className="font-bold">Sign up</span>
       </button>
     </div>
   );
