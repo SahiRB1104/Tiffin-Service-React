@@ -22,7 +22,7 @@ export const Menu = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await api.get("/menu");
+      const data = await api.get("/menu/");
       const list = Array.isArray(data) ? data : data.menu || [];
       setMenu(list);
     } catch (err) {

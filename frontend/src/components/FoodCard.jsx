@@ -9,10 +9,11 @@ export const FoodCard = ({ item }) => {
     <div className="group bg-slate-50 rounded-3xl overflow-hidden border border-slate-100 transition-all hover:shadow-2xl hover:shadow-slate-200 hover:-translate-y-1">
       <div className="relative h-56 overflow-hidden">
       <img
-        src={`/${item.img}`}
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        src={`http://localhost:8000${item.image_url}`}
+        className="w-full h-full object-cover"
         alt={item.name}
       />
+
 
 
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-800 shadow-sm">

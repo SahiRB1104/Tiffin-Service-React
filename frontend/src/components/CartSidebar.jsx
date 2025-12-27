@@ -76,7 +76,7 @@ export const CartSidebar = ({ isOpen, onClose, onCheckout }) => {
                         </span>
 
                         <button
-                          onClick={() => updateQty(item._id, 1)}
+                          onClick={() => updateQty(item.__cartKey, 1)}
                           className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center"
                         >
                           <Plus size={14} />

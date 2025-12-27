@@ -8,6 +8,13 @@ import React, {
 
 const CartContext = createContext(null);
 
+/**
+ * 🔑 Always generate a stable cart key
+ * Works even if backend doesn't send _id
+ */
+const getCartKey = (item) =>
+  item._id || item.id || item.name;
+
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem("cartData");
@@ -18,27 +25,44 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cartData", JSON.stringify(cart));
   }, [cart]);
 
+  /* ---------------- ADD TO CART ---------------- */
   const addToCart = (item) => {
+    const key = getCartKey(item);
+
     setCart((prev) => {
-      const existing = prev.find((i) => i._id === item._id);
+      const existing = prev.find(
+        (i) => i.__cartKey === key
+      );
+
       if (existing) {
         return prev.map((i) =>
-          i._id === item._id
+          i.__cartKey === key
             ? { ...i, quantity: i.quantity + 1 }
             : i
         );
       }
-      return [...prev, { ...item, quantity: 1 }];
+
+      return [
+        ...prev,
+        {
+          ...item,
+          __cartKey: key, // 🔑 internal only
+          quantity: 1,
+        },
+      ];
     });
   };
 
-  const updateQty = (id, delta) => {
+  /* ---------------- UPDATE QTY ---------------- */
+  const updateQty = (cartKey, delta) => {
     setCart((prev) =>
       prev
         .map((item) => {
-          if (item._id === id) {
+          if (item.__cartKey === cartKey) {
             const qty = item.quantity + delta;
-            return qty <= 0 ? null : { ...item, quantity: qty };
+            return qty <= 0
+              ? null
+              : { ...item, quantity: qty };
           }
           return item;
         })
@@ -46,15 +70,18 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  /* ---------------- CLEAR CART ---------------- */
   const clearCart = () => {
     setCart([]);
     localStorage.removeItem("cartData");
   };
 
+  /* ---------------- TOTAL ---------------- */
   const total = useMemo(
     () =>
       cart.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+        (sum, item) =>
+          sum + item.price * item.quantity,
         0
       ),
     [cart]
@@ -81,7 +108,9 @@ export const CartProvider = ({ children }) => {
 export const useCart = () => {
   const ctx = useContext(CartContext);
   if (!ctx) {
-    throw new Error("useCart must be used within CartProvider");
+    throw new Error(
+      "useCart must be used within CartProvider"
+    );
   }
   return ctx;
 };
