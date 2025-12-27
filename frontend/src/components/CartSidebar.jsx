@@ -45,14 +45,18 @@ export const CartSidebar = ({ isOpen, onClose, onCheckout }) => {
                     key={item._id ?? `${item.name}-${index}`}
                     className="flex gap-4"
                   >
-                    <img
-                      src={
-                        item.image_url ||
-                        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=200&q=80"
-                      }
-                      className="w-20 h-20 rounded-xl object-cover"
-                      alt={item.name}
-                    />
+                  <img
+                    src={
+                      item.image_url
+                        ? item.image_url.startsWith("/static")
+                          ? `http://localhost:8000${item.image_url}`
+                          : `http://localhost:8000/static/${item.image_url}`
+                        : "https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
+                    }
+                    className="w-20 h-20 rounded-xl object-cover"
+                    alt={item.name}
+                  />
+
 
                     <div className="flex-1">
                       <h4 className="font-bold text-slate-800">

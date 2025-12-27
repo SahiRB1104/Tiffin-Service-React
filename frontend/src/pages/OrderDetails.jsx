@@ -24,6 +24,24 @@ export const OrderDetails = () => {
   const [showCancel, setShowCancel] = useState(false);
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const getImageSrc = (item) => {
+  if (!item.image_url) {
+    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c";
+  }
+
+  // already normalized (new orders)
+  if (item.image_url.startsWith("/static")) {
+    return `http://localhost:8000${item.image_url}`;
+  }
+
+  // old orders (before backend assets move)
+  if (item.image_url.startsWith("images/")) {
+    return `http://localhost:8000/static/${item.image_url}`;
+  }
+
+  return item.image_url;
+};
+
 
   useEffect(() => {
     if (!orderId) return;
@@ -231,14 +249,12 @@ export const OrderDetails = () => {
                   className="py-4 flex items-center gap-4 first:pt-0 last:pb-0"
                 >
                   <div className="w-20 h-20 bg-slate-50 rounded-2xl overflow-hidden shrink-0">
-                    <img
-                      src={
-                        item.image_url ||
-                        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80"
-                      }
-                      className="w-full h-full object-cover"
-                      alt={item.name}
-                    />
+                  <img
+                    src={getImageSrc(item)}
+                    className="w-full h-full object-cover"
+                    alt={item.name}
+                  />
+
                   </div>
                   <div className="flex-1">
                     <h4 className="font-bold text-slate-800">
