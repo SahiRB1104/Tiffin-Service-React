@@ -8,7 +8,8 @@ from app.routes import (
     menu_routes,
     order_routes,
     payment_routes,
-    review_routes
+    review_routes,
+    address_routes
 )
 from app.config import FRONTEND_URL
 app = FastAPI(title="SB Tiffin Backend")
@@ -30,6 +31,7 @@ app.include_router(menu_routes.router)
 app.include_router(order_routes.router)
 app.include_router(payment_routes.router)
 app.include_router(review_routes.router)
+app.include_router(address_routes.router)
 
 # ✅ Serve static files
 app.mount(
