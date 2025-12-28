@@ -71,4 +71,17 @@ export const api = {
       );
     }
   },
+
+  delete: async (endpoint) => {
+    try {
+      const res = await instance.delete(endpoint);
+      return res.data;
+    } catch (err) {
+      throw new Error(
+        err.response?.data?.detail ||
+        err.message ||
+        "Request failed"
+      );
+    }
+  },
 };
