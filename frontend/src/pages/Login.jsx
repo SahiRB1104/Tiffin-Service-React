@@ -9,6 +9,7 @@ export const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
       const data = await api.post("/auth/login", {
@@ -29,8 +31,9 @@ export const Login = () => {
       });
 
       if (data.access_token) {
+        setSuccess("Login successful! Redirecting...");
         login(data.access_token);
-        navigate(from, { replace: true });
+        setTimeout(() => navigate(from, { replace: true }), 1500);
       } else {
         setError("Unexpected response from server");
       }
@@ -53,6 +56,12 @@ export const Login = () => {
       {error && (
         <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-3 text-sm border border-red-100">
           <AlertCircle size={18} /> {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-4 p-4 bg-green-50 text-green-600 rounded-xl flex items-center gap-3 text-sm border border-green-100">
+          ✓ {success}
         </div>
       )}
 

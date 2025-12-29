@@ -1,20 +1,42 @@
 import React, { useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { api } from "../api/api";
-import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
+
+    // Frontend validation
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Password is required");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
 
     try {
       const data = await api.post("/auth/register", {
@@ -22,14 +44,15 @@ export const Signup = () => {
         password,
       });
 
-      if (data && data.access_token) {
-        login(data.access_token);
-        navigate("/", { replace: true });
+      if (data && data.message) {
+        // Registration successful
+        setSuccess("Account sign up successful! Redirecting to login...");
+        setTimeout(() => navigate("/login", { replace: true }), 2000);
       } else {
         setError(data?.detail || "Registration failed");
       }
     } catch (err) {
-      setError(err?.message || "Registration failed");
+      setError(err?.response?.data?.detail || err?.message || "Registration failed");
     }
   };
 
@@ -44,8 +67,14 @@ export const Signup = () => {
       </p>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-3 text-sm">
+        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-3 text-sm border border-red-100">
           <AlertCircle size={18} /> {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-4 p-4 bg-green-50 text-green-600 rounded-xl flex items-center gap-3 text-sm border border-green-100">
+          ✓ {success}
         </div>
       )}
 
