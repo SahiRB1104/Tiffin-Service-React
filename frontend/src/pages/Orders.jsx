@@ -16,7 +16,7 @@ export const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data = await api.get("/orders");
+        const data = await api.get("/orders/");
         const list = Array.isArray(data) ? data : data.orders || [];
         setOrders(list);
       } catch (err) {

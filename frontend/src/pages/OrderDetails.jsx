@@ -42,6 +42,15 @@ export const OrderDetails = () => {
   return item.image_url;
 };
 
+  const formatPaymentMethod = (method) => {
+    const methodMap = {
+      card: "Credit / Debit Card",
+      upi: "UPI / Google Pay",
+      net: "Net Banking",
+    };
+    return methodMap[method?.toLowerCase()] || "Online Payment";
+  };
+
 
   useEffect(() => {
     if (!orderId) return;
@@ -49,6 +58,8 @@ export const OrderDetails = () => {
     const fetchOrder = async () => {
       try {
         const data = await api.get(`/orders/${orderId}`);
+        console.log("Order data received:", data);
+        console.log("Payment method:", data.payment_method);
         setOrder(data);
       } catch (err) {
         console.error("Failed to fetch order details:", err);
@@ -137,7 +148,7 @@ export const OrderDetails = () => {
           </h2>
           <p className="text-slate-500 flex items-center gap-2 mt-1">
             <Clock size={14} />
-            {new Date(order.created_at).toLocaleString(undefined, {
+            {new Date(order.created_at + "Z").toLocaleString(undefined, {
               dateStyle: "long",
               timeStyle: "short",
             })}
@@ -344,8 +355,14 @@ export const OrderDetails = () => {
                 Payment Method
               </p>
               <p className="text-sm font-medium">
-                {order.payment_method || "Paid via Card"}
+                {order.payment_method ? formatPaymentMethod(order.payment_method) : "Online Payment"}
               </p>
+              {/* Debug info - remove after fixing backend */}
+              {!order.payment_method && (
+                <p className="text-[8px] text-red-400 mt-1">
+                  (payment_method not returned from API)
+                </p>
+              )}
             </div>
           </div>
         </div>
