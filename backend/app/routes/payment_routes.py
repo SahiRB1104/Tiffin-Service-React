@@ -57,6 +57,7 @@ def dummy_checkout(
         "user_email": user["email"],
         "items": order_items,
         "total_amount": data.total_amount,
+        "payment_method": data.payment_method,  # ✅ Store payment method
         "payment_gateway": "DUMMY",
         "payment_status": "SUCCESS",
         "status": "PLACED",

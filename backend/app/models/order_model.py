@@ -13,6 +13,7 @@ class OrderItem(BaseModel):
 class OrderCreate(BaseModel):
     items: List[OrderItem]
     total_amount: float = Field(..., gt=0)
+    payment_method: Optional[str] = "card"  # card, upi, net
 
 
 class OrderResponse(BaseModel):
