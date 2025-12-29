@@ -29,26 +29,10 @@ export const Orders = () => {
   }, []);
 
   /* ----------------------------------------
-     Stable Order Number (UI neutral)
-     ---------------------------------------- */
-  const ordersWithOrderNo = useMemo(() => {
-    const byCreatedAsc = [...orders].sort(
-      (a, b) =>
-        new Date(a.created_at).getTime() -
-        new Date(b.created_at).getTime()
-    );
-
-    return byCreatedAsc.map((o, i) => ({
-      ...o,
-      orderNo: `ORD-${String(i + 1).padStart(4, "0")}`,
-    }));
-  }, [orders]);
-
-  /* ----------------------------------------
-     Sorting logic (unchanged UI)
+     Sorting logic
      ---------------------------------------- */
   const sortedOrders = useMemo(() => {
-    const list = [...ordersWithOrderNo];
+    const list = [...orders];
 
     switch (sortBy) {
       case "newest":
@@ -74,7 +58,7 @@ export const Orders = () => {
       default:
         return list;
     }
-  }, [ordersWithOrderNo, sortBy]);
+  }, [orders, sortBy]);
 
   /* ----------------------------------------
      Loading skeleton (unchanged)
@@ -145,7 +129,7 @@ export const Orders = () => {
               >
                 <div>
                   <p className="font-bold text-slate-800">
-                    Order #{o.orderNo}
+                    Order #{o.order_id}
                   </p>
 
                   <p className="text-sm text-slate-500 font-medium">

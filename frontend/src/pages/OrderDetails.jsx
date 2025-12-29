@@ -9,6 +9,10 @@ import {
   RefreshCcw,
   Receipt,
   Truck,
+  MapPin,
+  Copy,
+  Check,
+  Calendar,
 } from "lucide-react";
 import { api } from "../api/api";
 import { useCart } from "../context/CartContext";
@@ -24,6 +28,7 @@ export const OrderDetails = () => {
   const [showCancel, setShowCancel] = useState(false);
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
   const getImageSrc = (item) => {
   if (!item.image_url) {
     return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c";
@@ -90,8 +95,14 @@ export const OrderDetails = () => {
   const handleRetry = () => {
     if (order?.items) {
       order.items.forEach((item) => addToCart(item));
-      navigate("/menu"); // ✅ FIX
+      navigate("/menu");
     }
+  };
+
+  const handleCopyId = () => {
+    navigator.clipboard.writeText(order.order_id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   /* ---------------- LOADING ---------------- */
@@ -129,9 +140,9 @@ export const OrderDetails = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-6 pb-24">
-      {/* HEADER */}
+      {/* BACK BUTTON */}
       <button
-        onClick={() => navigate("/dashboard/orders")} // ✅ FIX
+        onClick={() => navigate("/dashboard/orders")}
         className="group flex items-center gap-2 text-slate-500 hover:text-slate-900 font-medium mb-8 transition-colors"
       >
         <ArrowLeft
@@ -141,28 +152,48 @@ export const OrderDetails = () => {
         Back to Orders
       </button>
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <div>
-          <h2 className="text-3xl font-serif text-slate-900">
-            Order #{order.order_id}
-          </h2>
-          <p className="text-slate-500 flex items-center gap-2 mt-1">
-            <Clock size={14} />
-            {new Date(order.created_at + "Z").toLocaleString(undefined, {
-              dateStyle: "long",
-              timeStyle: "short",
-            })}
-          </p>
+      {/* HEADER CARD */}
+      <div className="bg-amber-50 border border-amber-100 rounded-[2.5rem] p-8 md:p-10 mb-10 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="space-y-2 w-full md:w-auto">
+          <div className="flex items-start md:items-center gap-4">
+            <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-amber-200/50 shrink-0">
+              <Package size={28} />
+            </div>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="text-3xl md:text-4xl font-serif text-slate-900 leading-none">Order #{order.order_id}</h2>
+                <button 
+                  onClick={handleCopyId}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                    copied 
+                      ? 'bg-green-500 text-white scale-105' 
+                      : 'bg-white text-amber-600 hover:bg-amber-100 border border-amber-100 shadow-sm'
+                  }`}
+                >
+                  {copied ? <Check size={12} strokeWidth={4} /> : <Copy size={12} strokeWidth={3} />}
+                  {copied ? 'Copied!' : 'Copy ID'}
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center gap-4 mt-3">
+                <p className="text-slate-500 text-sm font-medium flex items-center gap-2">
+                  <Calendar size={14} className="text-amber-400" />
+                  {new Date(order.created_at + "Z").toLocaleDateString(undefined, { dateStyle: 'long' })}
+                </p>
+                <p className="text-slate-500 text-sm font-medium flex items-center gap-2">
+                  <Clock size={14} className="text-amber-400" />
+                  {new Date(order.created_at + "Z").toLocaleTimeString(undefined, { timeStyle: 'short' })}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-
         {!isCancelled && (
-          <div className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-widest border border-green-100 flex items-center gap-2">
+          <div className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-xs font-bold uppercase tracking-widest border border-green-100 flex items-center gap-2 whitespace-nowrap">
             <CheckCircle2 size={14} />
             Current Status: {order.status.replace(/_/g, " ")}
           </div>
         )}
       </div>
-  
 
 
 
@@ -282,7 +313,30 @@ export const OrderDetails = () => {
               ))}
             </div>
           </div>
-
+              
+          {/* DELIVERY ADDRESS */}
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+            <h3 className="font-bold text-xl text-slate-900 mb-6 flex items-center gap-3">
+              <MapPin size={24} className="text-amber-500" /> Delivery Address
+            </h3>
+            {order.delivery_address ? (
+              <div className="flex items-start gap-4 p-5 rounded-3xl bg-slate-50/50 border border-slate-50">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-500 shadow-sm shrink-0">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-lg mb-1">{order.delivery_address.label}</h4>
+                  <p className="text-slate-500 leading-relaxed font-medium">
+                    {order.delivery_address.addressLine}<br />
+                    {order.delivery_address.city}, {order.delivery_address.state} - {order.delivery_address.pincode}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-slate-400 italic">No specific delivery address recorded for this order.</p>
+            )}
+          </div>
+          
           {/* CANCEL */}
           {order.status === "PLACED" && !showCancel && (
             <button
@@ -348,7 +402,7 @@ export const OrderDetails = () => {
                     </div>
                     <div className="bg-white/60 rounded-3xl p-5 border border-amber-100 text-center shadow-sm">
                       <p className="text-[10px] text-amber-400 uppercase tracking-[0.2em] font-black mb-1">Payment Method</p>
-                      <p className="text-sm font-bold text-amber-950">{order.payment_method || "Paid via Card"}</p>
+                      <p className="text-sm font-bold text-amber-950">{formatPaymentMethod(order.payment_method)}</p>
                     </div>
                   </div>
                 </div>
