@@ -327,45 +327,31 @@ export const OrderDetails = () => {
         </div>
 
         {/* BILL */}
-        <div className="h-fit sticky top-24">
-          <div className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-xl">
-            <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-              <Receipt size={20} className="text-amber-500" /> Bill Summary
-            </h3>
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between text-slate-400">
-                <span>Subtotal</span>
-                <span>₹{order.total_amount}</span>
-              </div>
-              <div className="flex justify-between text-slate-400">
-                <span>Delivery</span>
-                <span className="text-green-400 font-bold">
-                  FREE
-                </span>
-              </div>
-              <div className="border-t border-white/10 pt-4 flex justify-between items-center">
-                <span className="font-bold text-xl">Total</span>
-                <span className="text-2xl font-bold text-amber-500">
-                  ₹{order.total_amount}
-                </span>
-              </div>
-            </div>
-            <div className="bg-white/5 rounded-2xl p-4 border border-white/10 text-center">
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-1">
-                Payment Method
-              </p>
-              <p className="text-sm font-medium">
-                {order.payment_method ? formatPaymentMethod(order.payment_method) : "Online Payment"}
-              </p>
-              {/* Debug info - remove after fixing backend */}
-              {!order.payment_method && (
-                <p className="text-[8px] text-red-400 mt-1">
-                  (payment_method not returned from API)
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+        <div className="h-fit lg:sticky lg:top-24">
+                  <div className="bg-amber-50/80 backdrop-blur-sm p-8 rounded-[2.5rem] border border-amber-100 shadow-xl shadow-amber-900/5">
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-amber-900">
+                      <Receipt size={20} className="text-amber-500" /> Bill Summary
+                    </h3>
+                    <div className="space-y-4 mb-8">
+                      <div className="flex justify-between text-amber-800/60 font-medium">
+                        <span>Subtotal</span>
+                        <span>₹{order.total_amount}</span>
+                      </div>
+                      <div className="flex justify-between text-amber-800/60 font-medium">
+                        <span>Delivery</span>
+                        <span className="text-green-600 font-bold">FREE</span>
+                      </div>
+                      <div className="border-t border-amber-200/50 pt-4 flex justify-between items-center">
+                        <span className="font-bold text-xl text-amber-950">Total</span>
+                        <span className="text-3xl font-black text-amber-600">₹{order.total_amount}</span>
+                      </div>
+                    </div>
+                    <div className="bg-white/60 rounded-3xl p-5 border border-amber-100 text-center shadow-sm">
+                      <p className="text-[10px] text-amber-400 uppercase tracking-[0.2em] font-black mb-1">Payment Method</p>
+                      <p className="text-sm font-bold text-amber-950">{order.payment_method || "Paid via Card"}</p>
+                    </div>
+                  </div>
+                </div>
       </div>
     </div>
   );
