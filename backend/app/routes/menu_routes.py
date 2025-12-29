@@ -3,6 +3,7 @@ from app.database import menu_col
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
+@router.get("", dependencies=[])  # 👈 Match both /menu and /menu/
 @router.get("/", dependencies=[])  # 👈 no auth dependency
 def get_menu():
     menu = []
