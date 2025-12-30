@@ -14,6 +14,20 @@ async def get_addresses(user=Depends(get_current_user)):
     return list(collection.find({"user_email": user["email"]}, {"_id": 0}))
 
 
+@router.get("/default")
+async def get_default_address(user=Depends(get_current_user)):
+    # Fetch the default address for the current user
+    address = collection.find_one(
+        {"user_email": user["email"], "isDefault": True},
+        {"_id": 0}
+    )
+    
+    if not address:
+        raise HTTPException(status_code=404, detail="No default address found")
+    
+    return address
+
+
 @router.post("/")
 async def add_address(data: dict, user=Depends(get_current_user)):
     if data.get("is_default"):
