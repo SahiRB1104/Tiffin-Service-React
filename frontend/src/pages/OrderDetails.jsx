@@ -52,6 +52,7 @@ export const OrderDetails = () => {
       card: "Credit / Debit Card",
       upi: "UPI / Google Pay",
       net: "Net Banking",
+      cod: "Cash on Delivery",
     };
     return methodMap[method?.toLowerCase()] || "Online Payment";
   };
