@@ -40,6 +40,7 @@ export const Payment = () => {
         items: cart,
         total_amount: total,
         payment_method: method,
+        delivery_address: defaultAddress,  // ✅ Send delivery address
         payment_status: "SUCCESS", // 🔑 simulate payment gateway
       });
 
