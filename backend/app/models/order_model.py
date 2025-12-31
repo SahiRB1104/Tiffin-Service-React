@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 
 class OrderItem(BaseModel):
@@ -14,6 +14,7 @@ class OrderCreate(BaseModel):
     items: List[OrderItem]
     total_amount: float = Field(..., gt=0)
     payment_method: Optional[str] = "card"  # card, upi, net, cod
+    delivery_address: Optional[Dict[str, Any]] = None  # Store delivery address
 
 
 class OrderResponse(BaseModel):
