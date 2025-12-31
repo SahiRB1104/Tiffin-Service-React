@@ -29,10 +29,24 @@ export const Orders = () => {
   }, []);
 
   /* ----------------------------------------
+     Assign order numbers (oldest = #1)
+     ---------------------------------------- */
+  const ordersWithNumbers = useMemo(() => {
+    const sorted = [...orders].sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+    return sorted.map((order, index) => ({
+      ...order,
+      orderNumber: index + 1,
+    }));
+  }, [orders]);
+
+  /* ----------------------------------------
      Sorting logic
      ---------------------------------------- */
   const sortedOrders = useMemo(() => {
-    const list = [...orders];
+    const list = [...ordersWithNumbers];
 
     switch (sortBy) {
       case "newest":
@@ -58,7 +72,7 @@ export const Orders = () => {
       default:
         return list;
     }
-  }, [orders, sortBy]);
+  }, [ordersWithNumbers, sortBy]);
 
   /* ----------------------------------------
      Loading skeleton (unchanged)
@@ -129,7 +143,7 @@ export const Orders = () => {
               >
                 <div>
                   <p className="font-bold text-slate-800">
-                    Order #{o.order_id}
+                    Order No. {o.orderNumber}
                   </p>
 
                   <p className="text-sm text-slate-500 font-medium">
