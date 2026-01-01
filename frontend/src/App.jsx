@@ -25,6 +25,9 @@ import { OrderDetails } from "./pages/OrderDetails";
 
 /* AUTH */
 import { useAuth } from "./auth/AuthContext";
+import { useCart } from "./context/CartContext";
+import { api } from "./api/api";
+import { Utensils } from "lucide-react";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -34,14 +37,51 @@ const ProtectedRoute = ({ children }) => {
 
 const App = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isOffersOpen, setIsOffersOpen] = useState(false);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  
   const location = useLocation();
   const navigate = useNavigate();
+  const { token } = useAuth();
+  const { cart, total, clearCart } = useCart();
 
   const isDashboard = location.pathname.startsWith("/dashboard");
 
   const handleCheckout = () => {
-    setIsCartOpen(false);
-    navigate("/payment");
+    if (!token) {
+      setIsCartOpen(false);
+      navigate("/login");
+    } else {
+      setIsCartOpen(false);
+      navigate("/payment");
+    }
+  };
+
+  const handleViewOrderDetails = (id) => {
+    setSelectedOrderId(id);
+    setIsOrderDetailsOpen(true);
+  };
+
+  const onPaymentComplete = async () => {
+    const orderData = {
+      items: cart.map(i => ({ 
+        name: i.name, 
+        price: i.price, 
+        quantity: i.quantity, 
+        image_url: i.image_url 
+      })),
+      total_amount: total
+    };
+    try {
+      const res = await api.post('/payment/checkout', orderData);
+      if (res.status === 'success' || res.message) {
+        clearCart();
+        navigate("/orders/success");
+      }
+    } catch (err) {
+      console.error("Order failed:", err);
+    }
   };
 
   return (
@@ -57,7 +97,7 @@ const App = () => {
       <div className="flex-grow flex pt-16">
         {isDashboard && (
           <div className="hidden md:block sticky top-16 h-[calc(100vh-64px)]">
-            <Sidebar />
+            <Sidebar onOffersOpen={() => setIsOffersOpen(true)} />
           </div>
         )}
 
@@ -117,6 +157,35 @@ const App = () => {
         onClose={() => setIsCartOpen(false)}
         onCheckout={handleCheckout}
       />
+
+      {/* MODALS */}
+      <Offers isOpen={isOffersOpen} onClose={() => setIsOffersOpen(false)} />
+      
+      {isOrderDetailsOpen && selectedOrderId && (
+        <OrderDetails 
+          orderId={selectedOrderId} 
+          isOpen={isOrderDetailsOpen}
+          onClose={() => setIsOrderDetailsOpen(false)}
+        />
+      )}
+
+      {/* FOOTER */}
+      {!isDashboard && (
+        <footer className="bg-slate-900 text-slate-400 py-12 text-center text-sm hidden md:block">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center px-6 gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">SB</div>
+              <span className="text-white font-bold">SB Tiffin</span>
+            </div>
+            <div className="flex gap-8">
+              <button onClick={() => navigate('/about')} className="hover:text-amber-400 transition-colors">About Us</button>
+              <button onClick={() => setIsOffersOpen(true)} className="hover:text-amber-400 transition-colors">Offers</button>
+              <button onClick={() => navigate('/dashboard/review')} className="hover:text-amber-400 transition-colors">Feedback</button>
+            </div>
+            <p>© {new Date().getFullYear()} SB Tiffin Service. Made with ❤️</p>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };
