@@ -10,7 +10,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
-export const Sidebar = () => {
+export const Sidebar = ({ onOffersOpen }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { logout } = useAuth();
@@ -37,22 +37,30 @@ export const Sidebar = () => {
       label: "Reviews",
     },
     {
-      path: "/about",
+      action: "offers",
       icon: <Info size={20} />,
-      label: "About Us",
+      label: "Offers",
     },
   ];
+
+  const handleItemClick = (item) => {
+    if (item.action === "offers" && onOffersOpen) {
+      onOffersOpen();
+    } else if (item.path) {
+      navigate(item.path);
+    }
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 h-full flex flex-col p-6">
       <div className="space-y-2 flex-grow">
-        {menuItems.map((item) => {
-          const isActive = pathname === item.path;
+        {menuItems.map((item, index) => {
+          const isActive = item.path && pathname === item.path;
 
           return (
             <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
+              key={item.path || item.action || index}
+              onClick={() => handleItemClick(item)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                 isActive
                   ? "bg-amber-50 text-amber-600"
