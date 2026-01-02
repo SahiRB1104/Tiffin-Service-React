@@ -182,7 +182,7 @@ const App = () => {
               <button onClick={() => setIsOffersOpen(true)} className="hover:text-amber-400 transition-colors">Offers</button>
               <button onClick={() => navigate('/dashboard/review')} className="hover:text-amber-400 transition-colors">Feedback</button>
             </div>
-            <p>© {new Date().getFullYear()} SB Tiffin Service. Made with ❤️</p>
+            <p>© {new Date().getFullYear()} SB Tiffin Service.</p>
           </div>
         </footer>
       )}
