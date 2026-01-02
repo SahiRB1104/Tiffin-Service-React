@@ -1,5 +1,5 @@
 import React from "react";
-import { ShoppingBag, X, Plus, Minus } from "lucide-react";
+import { ShoppingBag, X, Plus, Minus, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export const CartSidebar = ({ isOpen, onClose, onCheckout }) => {
@@ -43,7 +43,7 @@ export const CartSidebar = ({ isOpen, onClose, onCheckout }) => {
                 {cart.map((item, index) => (
                   <div
                     key={item._id ?? `${item.name}-${index}`}
-                    className="flex gap-4"
+                    className="flex gap-4 items-start"
                   >
                   <img
                     src={
@@ -69,7 +69,7 @@ export const CartSidebar = ({ isOpen, onClose, onCheckout }) => {
 
                       <div className="flex items-center gap-3">
                         <button
-                          onClick={() => updateQty(item._id, -1)}
+                          onClick={() => updateQty(item.__cartKey, -1)}
                           className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center"
                         >
                           <Minus size={14} />
@@ -87,6 +87,14 @@ export const CartSidebar = ({ isOpen, onClose, onCheckout }) => {
                         </button>
                       </div>
                     </div>
+
+                    <button
+                      onClick={() => updateQty(item.__cartKey, -item.quantity)}
+                      className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                      aria-label={`Remove ${item.name} from cart`}
+                    >
+                      <Trash2 size={18} />
+                    </button>
                   </div>
                 ))}
               </div>
