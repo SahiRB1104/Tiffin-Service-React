@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { ArrowUpDown, Package } from "lucide-react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { ArrowUpDown, Package, Check } from "lucide-react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 
@@ -7,10 +7,22 @@ export const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
+  const [sortOpen, setSortOpen] = useState(false);
 
   const RECENT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window to flag recent orders
 
   const navigate = useNavigate();
+  const sortRef = useRef(null);
+
+  const sortOptions = useMemo(
+    () => [
+      { value: "newest", label: "Newest First" },
+      { value: "oldest", label: "Oldest First" },
+      { value: "highest", label: "Highest Amount" },
+      { value: "lowest", label: "Lowest Amount" },
+    ],
+    []
+  );
 
   /* ----------------------------------------
      Fetch orders from backend
@@ -81,6 +93,29 @@ export const Orders = () => {
   }, [ordersWithNumbers, sortBy]);
 
   /* ----------------------------------------
+     Close sort drawer on outside click or ESC
+     ---------------------------------------- */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortRef.current && !sortRef.current.contains(event.target)) {
+        setSortOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setSortOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  /* ----------------------------------------
      Loading skeleton (unchanged)
      ---------------------------------------- */
   if (loading) {
@@ -107,21 +142,85 @@ export const Orders = () => {
         </h2>
 
         {orders.length > 0 && (
-          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
-            <ArrowUpDown size={16} className="text-slate-400" />
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Sort by:
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="text-sm font-semibold text-slate-700 bg-transparent outline-none"
+          <div
+            ref={sortRef}
+            className="relative md:self-end"
+            onMouseEnter={() => setSortOpen(true)}
+            onMouseLeave={() => setSortOpen(false)}
+          >
+            <button
+              type="button"
+              onClick={() => setSortOpen((v) => !v)}
+              aria-expanded={sortOpen}
+              className="flex items-center gap-3 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="highest">Highest Amount</option>
-              <option value="lowest">Lowest Amount</option>
-            </select>
+              <ArrowUpDown size={16} className="text-slate-400" />
+              <div className="flex flex-col items-start">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Sort By
+                </span>
+                <span className="text-xs font-semibold text-slate-800">
+                  {sortOptions.find((o) => o.value === sortBy)?.label}
+                </span>
+              </div>
+              <span
+                className={`ml-auto text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${
+                  sortOpen
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-slate-50 text-slate-500 border-slate-200"
+                }`}
+              >
+                {sortOpen ? "Hide" : "Show"}
+              </span>
+            </button>
+
+            {sortOpen && (
+              <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-10">
+                <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                    Choose priority
+                  </p>
+                  <p className="text-xs text-slate-600">
+                    Reorder your list in one tap.
+                  </p>
+                </div>
+                <div className="py-2">
+                  {sortOptions.map((option) => {
+                    const active = option.value === sortBy;
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSortBy(option.value);
+                          setSortOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-2 text-left transition-colors ${
+                          active
+                            ? "bg-amber-50 text-amber-800"
+                            : "text-slate-700 hover:bg-slate-50"
+                        }`}
+                      >
+                        <div
+                          className={`h-8 w-8 rounded-xl grid place-items-center border ${
+                            active
+                              ? "bg-white border-amber-200 text-amber-700"
+                              : "bg-slate-50 border-slate-200 text-slate-400"
+                          }`}
+                        >
+                          <ArrowUpDown size={16} />
+                        </div>
+                        <span className="text-sm font-semibold">
+                          {option.label}
+                        </span>
+                        {active && (
+                          <Check size={16} className="ml-auto text-amber-600" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
