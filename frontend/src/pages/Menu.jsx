@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { api } from "../api/api";
 import { FoodCard } from "../components/FoodCard";
 import {
@@ -6,6 +6,7 @@ import {
   ArrowUpDown,
   UtensilsCrossed,
   RefreshCw,
+  Check,
 } from "lucide-react";
 
 export const Menu = () => {
@@ -16,6 +17,17 @@ export const Menu = () => {
   const [sort, setSort] = useState("default");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
+
+  const sortOptions = useMemo(
+    () => [
+      { value: "default", label: "Default" },
+      { value: "low", label: "Price: Low → High" },
+      { value: "high", label: "Price: High → Low" },
+    ],
+    []
+  );
 
   /* ---------------- FETCH MENU ---------------- */
   const fetchMenu = async () => {
@@ -34,6 +46,27 @@ export const Menu = () => {
 
   useEffect(() => {
     fetchMenu();
+  }, []);
+
+  /* ---------------- CLOSE SORT DROPDOWN ON OUTSIDE CLICK OR ESC ---------------- */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortRef.current && !sortRef.current.contains(event.target)) {
+        setSortOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setSortOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   /* ---------------- CATEGORIES ---------------- */
@@ -97,17 +130,86 @@ export const Menu = () => {
             />
           </div>
 
-          <div className="relative">
-            <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white font-medium outline-none"
+          {/* SORT DROPDOWN */}
+          <div
+            ref={sortRef}
+            className="relative"
+            onMouseEnter={() => setSortOpen(true)}
+            onMouseLeave={() => setSortOpen(false)}
+          >
+            <button
+              type="button"
+              onClick={() => setSortOpen((v) => !v)}
+              aria-expanded={sortOpen}
+              className="flex items-center gap-3 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-200 whitespace-nowrap"
             >
-              <option value="default">Sort by</option>
-              <option value="low">Price: Low → High</option>
-              <option value="high">Price: High → Low</option>
-            </select>
+              <ArrowUpDown size={16} className="text-slate-400" />
+              <div className="flex flex-col items-start">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Sort By
+                </span>
+                <span className="text-xs font-semibold text-slate-800">
+                  {sortOptions.find((o) => o.value === sort)?.label}
+                </span>
+              </div>
+              <span
+                className={`ml-auto text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${
+                  sortOpen
+                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                    : "bg-slate-50 text-slate-500 border-slate-200"
+                }`}
+              >
+                {sortOpen ? "Hide" : "Show"}
+              </span>
+            </button>
+
+            {sortOpen && (
+              <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-50">
+                  <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                    Choose priority
+                  </p>
+                  <p className="text-xs text-slate-600">
+                    Reorder your list in one tap.
+                  </p>
+                </div>
+                <div className="py-2">
+                  {sortOptions.map((option) => {
+                    const active = option.value === sort;
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          setSort(option.value);
+                          setSortOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-2 text-left transition-colors ${
+                          active
+                            ? "bg-amber-50 text-amber-800"
+                            : "text-slate-700 hover:bg-slate-50"
+                        }`}
+                      >
+                        <div
+                          className={`h-8 w-8 rounded-xl grid place-items-center border flex-shrink-0 ${
+                            active
+                              ? "bg-white border-amber-200 text-amber-700"
+                              : "bg-slate-50 border-slate-200 text-slate-400"
+                          }`}
+                        >
+                          <ArrowUpDown size={16} />
+                        </div>
+                        <span className="text-sm font-semibold">
+                          {option.label}
+                        </span>
+                        {active && (
+                          <Check size={16} className="ml-auto text-amber-600 flex-shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
