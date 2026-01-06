@@ -23,7 +23,24 @@ export const Home = () => {
     try {
       const data = await api.get("/menu");
       const menuList = Array.isArray(data) ? data : data.menu || [];
-      setItems(menuList.slice(0, 4));
+      
+      // Group items by category
+      const categorized = {};
+      menuList.forEach(item => {
+        const category = item.category || 'other';
+        if (!categorized[category]) {
+          categorized[category] = [];
+        }
+        categorized[category].push(item);
+      });
+      
+      // Pick 2 items from each category to get variety
+      const featured = [];
+      Object.values(categorized).forEach(categoryItems => {
+        featured.push(...categoryItems.slice(0, 2));
+      });
+      
+      setItems(featured.slice(0, 8));
     } catch (err) {
       console.error("Failed to fetch menu:", err);
       setError(err.message || "Unable to load menu at this time.");
@@ -34,6 +51,12 @@ export const Home = () => {
 
   useEffect(() => {
     loadMenu();
+    // Auto-refresh featured dishes every 5 minutes
+    const interval = setInterval(() => {
+      loadMenu();
+    },  4 * 60 * 1000);
+
+    return () => clearInterval(interval);
   }, [loadMenu]);
 
   return (
@@ -139,13 +162,14 @@ export const Home = () => {
               Check back soon for our daily specials!
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {items.map((item, index) => (
-                <FoodCard
-                  key={item._id ?? `${item.name}-${index}`}
-                  item={item}
-                />
-              ))}
+            <div className="overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin scrollbar-thumb-amber-400 scrollbar-track-amber-50">
+              <div className="flex gap-8 min-w-min">
+                {items.map((item, index) => (
+                  <div key={item._id ?? `${item.name}-${index}`} className="flex-shrink-0 w-72">
+                    <FoodCard item={item} />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

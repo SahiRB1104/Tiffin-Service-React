@@ -3,8 +3,22 @@
 /* Optional global tweaks */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-thumb {
   background: #ff4757;
   border-radius: 10px;
+}
+
+/* Custom thin scrollbar for featured dishes */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #fbbf24;
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background-color: #fef3c7;
+  border-radius: 4px;
 }
