@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from app.dependencies import get_current_user
 from app.database import users_col
 from app.utils.password import hash_password, verify_password
+from app.utils.cache import invalidate_cache
 
 router = APIRouter(prefix="/user", tags=["User"])
 
@@ -24,6 +25,7 @@ def get_profile(user=Depends(get_current_user)):
     """
     Returns authenticated user's profile.
     Password and internal fields are never exposed.
+    Cache is managed automatically by JWT token.
     """
 
     return {
@@ -62,6 +64,9 @@ def update_password(
         {"email": user["email"]},
         {"$set": {"password": hash_password(data.new_password)}}
     )
+    
+    # Invalidate any cached user data (if you implement it)
+    invalidate_cache(f"user:profile:{user['email']}")
 
     return {
         "message": "Password updated successfully"
