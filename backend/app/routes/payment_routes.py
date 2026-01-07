@@ -71,6 +71,10 @@ def dummy_checkout(
 
     # 🔁 Auto status lifecycle
     background_tasks.add_task(auto_progress_order, order_id)
+    
+    # Invalidate order cache when new order is created
+    from app.utils.cache import invalidate_cache
+    invalidate_cache(f"orders:list:{user['email']}")
 
     return {
         "message": "Payment successful",
