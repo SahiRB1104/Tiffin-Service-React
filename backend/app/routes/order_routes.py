@@ -3,6 +3,7 @@ from datetime import datetime
 import random
 from app.dependencies import get_current_user
 from app.database import orders_col
+from app.utils.cache import get_cache, set_cache, invalidate_cache
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -18,7 +19,13 @@ def generate_order_id():
 def get_my_orders(user=Depends(get_current_user)):
     """
     Returns only orders of the logged-in user.
+    Cached for 5 minutes.
     """
+    cache_key = f"orders:list:{user['email']}"
+    cached = get_cache(cache_key)
+    if cached:
+        return cached
+    
     orders = list(
         orders_col.find(
             {"user_email": user["email"]},
@@ -26,14 +33,22 @@ def get_my_orders(user=Depends(get_current_user)):
         )
     )
 
-    return {
+    result = {
         "count": len(orders),
         "orders": orders
     }
+    
+    set_cache(cache_key, result, expire_time=300)
+    return result
 
 
 @router.get("/{order_id}")
 def get_order_details(order_id: str, user=Depends(get_current_user)):
+    cache_key = f"orders:detail:{order_id}:{user['email']}"
+    cached = get_cache(cache_key)
+    if cached:
+        return cached
+    
     order = orders_col.find_one(
         {
             "order_id": order_id,
@@ -45,6 +60,7 @@ def get_order_details(order_id: str, user=Depends(get_current_user)):
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
+    set_cache(cache_key, order, expire_time=300)
     return order
 
 @router.post("/{order_id}/cancel")
@@ -83,6 +99,12 @@ def cancel_order(
                 "updated_at": datetime.utcnow(),
             }
         }
+    )
+    
+    # Invalidate cached orders
+    invalidate_cache(
+        f"orders:list:{user['email']}",
+        f"orders:detail:{order_id}:{user['email']}"
     )
 
     return {"message": "Order cancelled successfully"}

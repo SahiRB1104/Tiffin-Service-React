@@ -1,10 +1,12 @@
 from fastapi import APIRouter
 from app.database import menu_col
+from app.utils.cache import cache, invalidate_cache
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
 @router.get("", dependencies=[])  # 👈 Match both /menu and /menu/
 @router.get("/", dependencies=[])  # 👈 no auth dependency
+@cache(expire_time=3600)  # Cache for 1 hour - menu rarely changes
 def get_menu():
     menu = []
 
