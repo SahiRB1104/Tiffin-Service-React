@@ -12,6 +12,8 @@ from app.routes import (
     address_routes
 )
 from app.config import FRONTEND_URL
+from app.utils.redis_client import get_redis
+
 app = FastAPI(title="SB Tiffin Backend")
 
 # ✅ CORS FIX (REQUIRED)
@@ -39,6 +41,20 @@ app.mount(
     StaticFiles(directory="static"),
     name="static"
 )
+
+# ✅ Startup event to check Redis connection
+@app.on_event("startup")
+def startup_event():
+    """Initialize Redis connection on startup"""
+    redis_client = get_redis()
+    if redis_client:
+        print("\n" + "="*50)
+        print("✅ REDIS CACHE ENABLED")
+        print("="*50 + "\n")
+    else:
+        print("\n" + "="*50)
+        print("⚠️  REDIS CACHE DISABLED")
+        print("="*50 + "\n")
 
 @app.get("/")
 def root():
