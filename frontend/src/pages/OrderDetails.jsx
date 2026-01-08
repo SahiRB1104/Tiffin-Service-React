@@ -337,6 +337,33 @@ export const OrderDetails = () => {
               <p className="text-slate-400 italic">No specific delivery address recorded for this order.</p>
             )}
           </div>
+        </div>
+
+        {/* BILL */}
+        <div className="h-fit lg:sticky lg:top-24 space-y-6">
+          <div className="bg-amber-50/80 backdrop-blur-sm p-8 rounded-[2.5rem] border border-amber-100 shadow-xl shadow-amber-900/5">
+            <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-amber-900">
+              <Receipt size={20} className="text-amber-500" /> Bill Summary
+            </h3>
+            <div className="space-y-4 mb-8">
+              <div className="flex justify-between text-amber-800/60 font-medium">
+                <span>Subtotal</span>
+                <span>₹{order.total_amount}</span>
+              </div>
+              <div className="flex justify-between text-amber-800/60 font-medium">
+                <span>Delivery</span>
+                <span className="text-green-600 font-bold">FREE</span>
+              </div>
+              <div className="border-t border-amber-200/50 pt-4 flex justify-between items-center">
+                <span className="font-bold text-xl text-amber-950">Total</span>
+                <span className="text-3xl font-black text-amber-600">₹{order.total_amount}</span>
+              </div>
+            </div>
+            <div className="bg-white/60 rounded-3xl p-5 border border-amber-100 text-center shadow-sm">
+              <p className="text-[10px] text-amber-400 uppercase tracking-[0.2em] font-black mb-1">Payment Method</p>
+              <p className="text-sm font-bold text-amber-950">{formatPaymentMethod(order.payment_method)}</p>
+            </div>
+          </div>
           
           {/* CANCEL */}
           {order.status === "PLACED" && !showCancel && (
@@ -380,33 +407,6 @@ export const OrderDetails = () => {
             </div>
           )}
         </div>
-
-        {/* BILL */}
-        <div className="h-fit lg:sticky lg:top-24">
-                  <div className="bg-amber-50/80 backdrop-blur-sm p-8 rounded-[2.5rem] border border-amber-100 shadow-xl shadow-amber-900/5">
-                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-amber-900">
-                      <Receipt size={20} className="text-amber-500" /> Bill Summary
-                    </h3>
-                    <div className="space-y-4 mb-8">
-                      <div className="flex justify-between text-amber-800/60 font-medium">
-                        <span>Subtotal</span>
-                        <span>₹{order.total_amount}</span>
-                      </div>
-                      <div className="flex justify-between text-amber-800/60 font-medium">
-                        <span>Delivery</span>
-                        <span className="text-green-600 font-bold">FREE</span>
-                      </div>
-                      <div className="border-t border-amber-200/50 pt-4 flex justify-between items-center">
-                        <span className="font-bold text-xl text-amber-950">Total</span>
-                        <span className="text-3xl font-black text-amber-600">₹{order.total_amount}</span>
-                      </div>
-                    </div>
-                    <div className="bg-white/60 rounded-3xl p-5 border border-amber-100 text-center shadow-sm">
-                      <p className="text-[10px] text-amber-400 uppercase tracking-[0.2em] font-black mb-1">Payment Method</p>
-                      <p className="text-sm font-bold text-amber-950">{formatPaymentMethod(order.payment_method)}</p>
-                    </div>
-                  </div>
-                </div>
       </div>
     </div>
   );
