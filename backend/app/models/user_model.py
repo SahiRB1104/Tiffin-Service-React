@@ -21,6 +21,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
     email: EmailStr
+    phone: str | None = None
 
     class Config:
         from_attributes = True

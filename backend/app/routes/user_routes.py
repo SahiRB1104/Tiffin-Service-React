@@ -17,6 +17,10 @@ class UpdatePasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=6)
 
 
+class UpdatePhoneRequest(BaseModel):
+    phone: str = Field(..., min_length=10, max_length=15)
+
+
 # =========================
 # GET PROFILE
 # =========================
@@ -29,7 +33,8 @@ def get_profile(user=Depends(get_current_user)):
     """
 
     return {
-        "email": user["email"]
+        "email": user["email"],
+        "phone": user.get("phone")
     }
 
 
@@ -70,4 +75,35 @@ def update_password(
 
     return {
         "message": "Password updated successfully"
+    }
+
+
+# =========================
+# UPDATE PHONE NUMBER
+# =========================
+@router.put("/update-phone")
+def update_phone(
+    data: UpdatePhoneRequest,
+    user=Depends(get_current_user)
+):
+    """
+    Updates the user's phone number.
+    """
+    db_user = users_col.find_one({"email": user["email"]})
+
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Update phone number
+    users_col.update_one(
+        {"email": user["email"]},
+        {"$set": {"phone": data.phone}}
+    )
+    
+    # Invalidate any cached user data
+    invalidate_cache(f"user:profile:{user['email']}")
+
+    return {
+        "message": "Phone number updated successfully",
+        "phone": data.phone
     }
