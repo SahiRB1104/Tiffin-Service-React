@@ -16,18 +16,19 @@ export const Profile = () => {
       setError('Phone number is required');
       return;
     }
-    
-    if (phoneNumber.length < 10) {
-      setError('Phone number must be at least 10 digits');
+
+    const normalized = phoneNumber.trim();
+    if (!/^\d{10}$/.test(normalized)) {
+      setError('Phone number must be exactly 10 digits');
       return;
     }
 
     try {
       setLoading(true);
       setError('');
-      const response = await api.put('/user/update-phone', { phone: phoneNumber });
+      const response = await api.put('/user/update-phone', { phone: normalized });
       setSuccess('Phone number updated successfully!');
-      setUser({ ...user, phone: phoneNumber });
+      setUser({ ...user, phone: normalized });
       setIsEditingPhone(false);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -89,7 +90,7 @@ export const Profile = () => {
                     <input
                       type="tel"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
                       className="flex-1 px-3 py-1 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Enter phone number"
                       disabled={loading}
