@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, constr
 from app.dependencies import get_current_user
 from app.database import users_col
 from app.utils.password import hash_password, verify_password
@@ -18,7 +18,9 @@ class UpdatePasswordRequest(BaseModel):
 
 
 class UpdatePhoneRequest(BaseModel):
-    phone: str = Field(..., min_length=10, max_length=15)
+    phone: constr(pattern=r"^\d{10}$") = Field(
+        ..., description="10 digit phone number without separators"
+    )
 
 
 # =========================
