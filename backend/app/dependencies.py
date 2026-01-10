@@ -25,4 +25,8 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
-    return {"email": user["email"]}
+    # Return only non-sensitive fields that downstream routes need
+    return {
+        "email": user.get("email"),
+        "phone": user.get("phone"),
+    }
