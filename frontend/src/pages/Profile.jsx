@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { User, Mail, Phone, Shield, Edit2, Save, X } from 'lucide-react';
+import { User, Mail, Phone, Shield, Edit2, Save, X, Loader } from 'lucide-react';
 import { api } from '../api/api';
 
 export const Profile = () => {
@@ -11,7 +11,16 @@ export const Profile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleUpdatePhone = async () => {
+  // OTP states
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [pendingPhoneNumber, setPendingPhoneNumber] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
+
+  const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
       setError('Phone number is required');
       return;
@@ -26,22 +35,117 @@ export const Profile = () => {
     try {
       setLoading(true);
       setError('');
-      const response = await api.put('/user/update-phone', { phone: normalized });
-      setSuccess('Phone number updated successfully!');
-      setUser({ ...user, phone: normalized });
-      setIsEditingPhone(false);
-      setTimeout(() => setSuccess(''), 3000);
+      setOtpError('');
+      
+      // Send OTP to phone number
+      await api.post('/user/send-otp', { phone: normalized });
+      
+      setPendingPhoneNumber(normalized);
+      setShowOTPModal(true);
+      setOtpSent(true);
+      setOtp('');
+      setResendTimer(60);
+      setSuccess('OTP sent successfully! Check your phone.');
+      
+      // Resend timer
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
     } catch (err) {
-      setError(err.message || 'Failed to update phone number');
+      setError(err.response?.data?.detail || err.message || 'Failed to send OTP');
+      setShowOTPModal(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    if (!otp.trim()) {
+      setOtpError('OTP is required');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(otp.trim())) {
+      setOtpError('OTP must be exactly 6 digits');
+      return;
+    }
+
+    try {
+      setOtpLoading(true);
+      setOtpError('');
+
+      // Verify OTP
+      await api.post('/user/verify-otp', {
+        phone: pendingPhoneNumber,
+        otp: otp.trim(),
+      });
+
+      // OTP verified, now save phone number
+      await api.put('/user/update-phone', {
+        phone: pendingPhoneNumber,
+        verified: true,
+      });
+
+      setSuccess('Phone number updated successfully!');
+      setUser({ ...user, phone: pendingPhoneNumber });
+      setShowOTPModal(false);
+      setIsEditingPhone(false);
+      setOtp('');
+      setPendingPhoneNumber('');
+      setOtpSent(false);
+      
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setOtpError(err.response?.data?.detail || err.message || 'Failed to verify OTP');
+    } finally {
+      setOtpLoading(false);
     }
   };
 
   const handleCancelEdit = () => {
     setPhoneNumber(user?.phone || '');
     setIsEditingPhone(false);
+    setShowOTPModal(false);
+    setOtp('');
     setError('');
+    setOtpError('');
+    setPendingPhoneNumber('');
+    setOtpSent(false);
+    setResendTimer(0);
+  };
+
+  const handleResendOTP = async () => {
+    try {
+      setOtpLoading(true);
+      setOtpError('');
+      
+      await api.post('/user/send-otp', { phone: pendingPhoneNumber });
+      
+      setOtp('');
+      setResendTimer(60);
+      setOtpError('');
+      
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      setOtpError(err.response?.data?.detail || 'Failed to resend OTP');
+    } finally {
+      setOtpLoading(false);
+    }
   };
 
   return (
@@ -94,13 +198,14 @@ export const Profile = () => {
                       className="flex-1 px-3 py-1 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                       placeholder="Enter phone number"
                       disabled={loading}
+                      maxLength="10"
                     />
                     <button
-                      onClick={handleUpdatePhone}
+                      onClick={handleSendOTP}
                       disabled={loading}
-                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                      className="p-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:opacity-50 flex items-center gap-2"
                     >
-                      <Save size={18} />
+                      {loading ? <Loader size={18} className="animate-spin" /> : <Save size={18} />}
                     </button>
                     <button
                       onClick={handleCancelEdit}
@@ -133,6 +238,67 @@ export const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* OTP Modal */}
+      {showOTPModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <h3 className="text-2xl font-bold text-slate-900 mb-2">Verify Your Phone</h3>
+            <p className="text-slate-600 mb-6">Enter the 6-digit OTP sent to {pendingPhoneNumber}</p>
+
+            {/* OTP Error */}
+            {otpError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {otpError}
+              </div>
+            )}
+
+            {/* OTP Input */}
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              maxLength="6"
+              placeholder="000000"
+              className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg text-center text-2xl font-bold focus:outline-none focus:border-amber-500 mb-4 tracking-widest"
+              disabled={otpLoading}
+            />
+
+            {/* Resend Timer */}
+            <div className="text-center mb-4">
+              {resendTimer > 0 ? (
+                <p className="text-sm text-slate-600">Resend OTP in {resendTimer}s</p>
+              ) : (
+                <button
+                  onClick={handleResendOTP}
+                  disabled={otpLoading}
+                  className="text-sm text-amber-600 hover:text-amber-700 font-medium disabled:opacity-50"
+                >
+                  Resend OTP
+                </button>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleVerifyOTP}
+                disabled={otpLoading || otp.length !== 6}
+                className="flex-1 bg-amber-500 text-white py-3 rounded-lg font-semibold hover:bg-amber-600 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {otpLoading ? <Loader size={18} className="animate-spin" /> : 'Verify'}
+              </button>
+              <button
+                onClick={handleCancelEdit}
+                disabled={otpLoading}
+                className="flex-1 border-2 border-slate-300 text-slate-700 py-3 rounded-lg font-semibold hover:bg-slate-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
