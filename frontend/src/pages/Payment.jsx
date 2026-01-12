@@ -115,6 +115,34 @@ export const Payment = () => {
             )}
           </section>
 
+          {/* ORDER SUMMARY SECTION */}
+          <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl">
+            <h3 className="text-xl font-bold mb-6 text-slate-800">Order Summary</h3>
+            <div className="space-y-4 mb-8">
+              <div className="flex justify-between text-slate-500">
+                <span>Item Total</span>
+                <span>₹{total}</span>
+              </div>
+              <div className="flex justify-between text-slate-500">
+                <span>Delivery Fee</span>
+                <span className="text-green-600 font-bold">FREE</span>
+              </div>
+              <div className="border-t border-slate-100 pt-4 flex justify-between text-xl font-bold text-slate-900">
+                <span>Total Pay</span>
+                <span className="text-amber-500">₹{total}</span>
+              </div>
+            </div>
+            <button
+              onClick={handlePayment}
+              disabled={loading}
+              className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Processing..." : "Pay & Place Order"}
+            </button>
+          </div>
+        </div>
+
+        <div>
           <h2 className="text-3xl font-serif mb-8 text-slate-900">Payment Methods</h2>
           <div className="space-y-4">
             {[
@@ -154,31 +182,6 @@ export const Payment = () => {
               </label>
             ))}
           </div>
-        </div>
-
-        <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl h-fit">
-          <h3 className="text-xl font-bold mb-6 text-slate-800">Order Summary</h3>
-          <div className="space-y-4 mb-8">
-            <div className="flex justify-between text-slate-500">
-              <span>Item Total</span>
-              <span>₹{total}</span>
-            </div>
-            <div className="flex justify-between text-slate-500">
-              <span>Delivery Fee</span>
-              <span className="text-green-600 font-bold">FREE</span>
-            </div>
-            <div className="border-t border-slate-100 pt-4 flex justify-between text-xl font-bold text-slate-900">
-              <span>Total Pay</span>
-              <span className="text-amber-500">₹{total}</span>
-            </div>
-          </div>
-          <button
-            onClick={handlePayment}
-            disabled={loading}
-            className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Processing..." : "Pay & Place Order"}
-          </button>
         </div>
       </div>
 
