@@ -38,11 +38,28 @@ export const api = {
       const res = await instance.get(endpoint);
       return res.data;
     } catch (err) {
-      throw new Error(
-        err.response?.data?.detail ||
-        err.message ||
-        "Request failed"
-      );
+      // Handle different error response formats
+      let errorMessage = "Request failed";
+      
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        // If detail is a string, use it directly
+        if (typeof detail === "string") {
+          errorMessage = detail;
+        }
+        // If detail is an array (validation errors), format it
+        else if (Array.isArray(detail)) {
+          errorMessage = detail.map(e => e.msg || e.message).join(", ");
+        }
+        // If detail is an object, stringify it
+        else if (typeof detail === "object") {
+          errorMessage = JSON.stringify(detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      throw new Error(errorMessage);
     }
   },
 
@@ -51,11 +68,28 @@ export const api = {
       const res = await instance.post(endpoint, body);
       return res.data;
     } catch (err) {
-      throw new Error(
-        err.response?.data?.detail ||
-        err.message ||
-        "Request failed"
-      );
+      // Handle different error response formats
+      let errorMessage = "Request failed";
+      
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        // If detail is a string, use it directly
+        if (typeof detail === "string") {
+          errorMessage = detail;
+        }
+        // If detail is an array (validation errors), format it
+        else if (Array.isArray(detail)) {
+          errorMessage = detail.map(e => e.msg || e.message).join(", ");
+        }
+        // If detail is an object, stringify it
+        else if (typeof detail === "object") {
+          errorMessage = JSON.stringify(detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      throw new Error(errorMessage);
     }
   },
 
@@ -64,11 +98,28 @@ export const api = {
       const res = await instance.put(endpoint, body);
       return res.data;
     } catch (err) {
-      throw new Error(
-        err.response?.data?.detail ||
-        err.message ||
-        "Request failed"
-      );
+      // Handle different error response formats
+      let errorMessage = "Request failed";
+      
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        // If detail is a string, use it directly
+        if (typeof detail === "string") {
+          errorMessage = detail;
+        }
+        // If detail is an array (validation errors), format it
+        else if (Array.isArray(detail)) {
+          errorMessage = detail.map(e => e.msg || e.message).join(", ");
+        }
+        // If detail is an object, stringify it
+        else if (typeof detail === "object") {
+          errorMessage = JSON.stringify(detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      throw new Error(errorMessage);
     }
   },
 
@@ -77,11 +128,28 @@ export const api = {
       const res = await instance.delete(endpoint);
       return res.data;
     } catch (err) {
-      throw new Error(
-        err.response?.data?.detail ||
-        err.message ||
-        "Request failed"
-      );
+      // Handle different error response formats
+      let errorMessage = "Request failed";
+      
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        // If detail is a string, use it directly
+        if (typeof detail === "string") {
+          errorMessage = detail;
+        }
+        // If detail is an array (validation errors), format it
+        else if (Array.isArray(detail)) {
+          errorMessage = detail.map(e => e.msg || e.message).join(", ");
+        }
+        // If detail is an object, stringify it
+        else if (typeof detail === "object") {
+          errorMessage = JSON.stringify(detail);
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      throw new Error(errorMessage);
     }
   },
 };
