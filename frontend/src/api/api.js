@@ -79,7 +79,23 @@ export const api = {
         }
         // If detail is an array (validation errors), format it
         else if (Array.isArray(detail)) {
-          errorMessage = detail.map(e => e.msg || e.message).join(", ");
+          errorMessage = detail.map(e => {
+            // Customize validation error messages
+            const field = e.loc?.[e.loc.length - 1] || "field";
+            const msg = e.msg || e.message || "";
+            
+            // Handle password validation errors
+            if (field === "password" && msg.includes("at least 6 characters")) {
+              return "Password must be at least 6 characters";
+            }
+            
+            // Handle other validation errors with field name
+            if (field && msg) {
+              return `${field.charAt(0).toUpperCase() + field.slice(1)}: ${msg}`;
+            }
+            
+            return msg;
+          }).join(", ");
         }
         // If detail is an object, stringify it
         else if (typeof detail === "object") {
