@@ -9,7 +9,8 @@ from app.routes import (
     order_routes,
     payment_routes,
     review_routes,
-    address_routes
+    address_routes,
+    coupon_routes
 )
 from app.config import FRONTEND_URL
 from app.utils.redis_client import get_redis
@@ -34,6 +35,7 @@ app.include_router(order_routes.router)
 app.include_router(payment_routes.router)
 app.include_router(review_routes.router)
 app.include_router(address_routes.router)
+app.include_router(coupon_routes.router)
 
 # ✅ Serve static files
 app.mount(
