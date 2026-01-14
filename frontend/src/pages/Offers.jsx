@@ -13,9 +13,10 @@ export const Offers = ({ isOpen, onClose }) => {
   };
 
   const offers = [
-    { code: 'FIRST50', title: '50% Off First Order', desc: 'Welcome to the family! Get half off on your very first tiffin.', color: 'bg-amber-500' },
-    { code: 'MONTHLY20', title: '20% Monthly Pass', desc: 'Subscribe for a month and save big on every meal.', color: 'bg-indigo-600' },
-    { code: 'REF100', title: 'Refer & Earn ₹100', desc: 'Share with friends and get credits instantly.', color: 'bg-green-600' }
+    { code: 'WELCOME10', title: '10% Off', desc: 'Get 10% off on your first order. Minimum order ₹100.', color: 'bg-amber-500' },
+    { code: 'FLAT50', title: 'Flat ₹50 Off', desc: 'Flat ₹50 off on orders above ₹200.', color: 'bg-indigo-600' },
+    { code: 'SAVE20', title: 'Save 20%', desc: 'Save 20% on orders above ₹300. Max discount ₹100.', color: 'bg-green-600' },
+    { code: 'BIGSALE', title: 'Mega Sale 25%', desc: 'Get 25% off on orders above ₹500. Max discount ₹150.', color: 'bg-rose-600' }
   ];
 
   return (
@@ -27,7 +28,7 @@ export const Offers = ({ isOpen, onClose }) => {
       />
       
       {/* Card */}
-      <div className="relative w-full max-w-4xl bg-white rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+      <div className="relative w-full max-w-6xl bg-white rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300 max-h-[90vh] overflow-y-auto">
         <div className="p-8 md:p-12">
           <div className="flex justify-between items-center mb-10">
             <h2 className="text-3xl md:text-4xl font-serif flex items-center gap-4 text-slate-900">
@@ -41,22 +42,22 @@ export const Offers = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {offers.map((offer, i) => {
               const isCopied = copiedCode === offer.code;
               return (
-                <div key={i} className={`${offer.color} p-6 rounded-[2rem] text-white shadow-lg relative overflow-hidden group transition-all hover:scale-[1.02]`}>
+                <div key={i} className={`${offer.color} p-6 rounded-[2rem] text-white shadow-lg relative overflow-hidden group transition-all hover:scale-[1.02] min-h-[220px] flex flex-col`}>
                   <Tag className="absolute -bottom-4 -right-4 w-24 h-24 opacity-10 rotate-12 group-hover:scale-110 transition-transform" />
                   
-                  <div className="relative z-10">
-                    <h3 className="text-xl font-bold mb-2">{offer.title}</h3>
-                    <p className="text-white/80 text-xs mb-6 leading-relaxed font-medium">{offer.desc}</p>
+                  <div className="relative z-10 flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold mb-3">{offer.title}</h3>
+                    <p className="text-white/90 text-sm mb-6 leading-relaxed font-medium flex-1">{offer.desc}</p>
                     
-                    <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-1.5 flex justify-between items-center">
-                      <span className="font-mono font-bold tracking-widest pl-3 text-sm">{offer.code}</span>
+                    <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2 flex justify-between items-center gap-2 mt-auto">
+                      <span className="font-mono font-bold tracking-wider pl-2 text-sm truncate">{offer.code}</span>
                       <button 
                         onClick={() => handleCopy(offer.code)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 shrink-0 ${
                           isCopied 
                             ? 'bg-white text-green-600 scale-105' 
                             : 'bg-white text-slate-900 hover:bg-slate-50'
@@ -65,12 +66,12 @@ export const Offers = ({ isOpen, onClose }) => {
                         {isCopied ? (
                           <>
                             <Check size={12} strokeWidth={4} />
-                            COPIED!
+                            <span className="hidden sm:inline">COPIED!</span>
                           </>
                         ) : (
                           <>
                             <Copy size={12} strokeWidth={3} />
-                            COPY
+                            <span className="hidden sm:inline">COPY</span>
                           </>
                         )}
                       </button>
