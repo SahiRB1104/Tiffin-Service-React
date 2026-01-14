@@ -21,6 +21,9 @@ export const CartProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [discount, setDiscount] = useState(0);
+
   useEffect(() => {
     localStorage.setItem("cartData", JSON.stringify(cart));
   }, [cart]);
@@ -73,7 +76,21 @@ export const CartProvider = ({ children }) => {
   /* ---------------- CLEAR CART ---------------- */
   const clearCart = () => {
     setCart([]);
+    setAppliedCoupon(null);
+    setDiscount(0);
     localStorage.removeItem("cartData");
+  };
+
+  /* ---------------- APPLY COUPON ---------------- */
+  const applyCoupon = (couponData) => {
+    setAppliedCoupon(couponData.coupon_name);
+    setDiscount(couponData.discount_amount);
+  };
+
+  /* ---------------- REMOVE COUPON ---------------- */
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setDiscount(0);
   };
 
   /* ---------------- TOTAL ---------------- */
@@ -87,6 +104,12 @@ export const CartProvider = ({ children }) => {
     [cart]
   );
 
+  /* ---------------- FINAL TOTAL (AFTER DISCOUNT) ---------------- */
+  const finalTotal = useMemo(
+    () => Math.max(0, total - discount),
+    [total, discount]
+  );
+
   const value = useMemo(
     () => ({
       cart,
@@ -94,8 +117,13 @@ export const CartProvider = ({ children }) => {
       updateQty,
       clearCart,
       total,
+      appliedCoupon,
+      discount,
+      finalTotal,
+      applyCoupon,
+      removeCoupon,
     }),
-    [cart, total]
+    [cart, total, appliedCoupon, discount, finalTotal]
   );
 
   return (
