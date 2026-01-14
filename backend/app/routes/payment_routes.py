@@ -57,6 +57,9 @@ def dummy_checkout(
         "user_email": user["email"],
         "items": order_items,
         "total_amount": data.total_amount,
+        "discount_amount": data.discount_amount or 0,
+        "final_amount": data.final_amount or data.total_amount,
+        "coupon_code": data.coupon_code,
         "payment_method": data.payment_method,  # ✅ Store payment method
         "delivery_address": data.delivery_address,  # ✅ Store delivery address
         "payment_gateway": "DUMMY",
