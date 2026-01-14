@@ -15,6 +15,9 @@ class OrderCreate(BaseModel):
     total_amount: float = Field(..., gt=0)
     payment_method: Optional[str] = "card"  # card, upi, net, cod
     delivery_address: Optional[Dict[str, Any]] = None  # Store delivery address
+    coupon_code: Optional[str] = None  # Applied coupon code
+    discount_amount: Optional[float] = 0  # Discount amount
+    final_amount: Optional[float] = None  # Amount after discount
 
 
 class OrderResponse(BaseModel):
