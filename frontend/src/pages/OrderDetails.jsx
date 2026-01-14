@@ -354,9 +354,17 @@ export const OrderDetails = () => {
                 <span>Delivery</span>
                 <span className="text-green-600 font-bold">FREE</span>
               </div>
+              {order.discount_amount > 0 && (
+                <div className="flex justify-between text-green-600 font-semibold">
+                  <div className="flex items-center gap-2">
+                    <span>Discount ({order.coupon_code})</span>
+                  </div>
+                  <span>-₹{order.discount_amount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="border-t border-amber-200/50 pt-4 flex justify-between items-center">
-                <span className="font-bold text-xl text-amber-950">Total</span>
-                <span className="text-3xl font-black text-amber-600">₹{order.total_amount}</span>
+                <span className="font-bold text-xl text-amber-950">Total Paid</span>
+                <span className="text-3xl font-black text-amber-600">₹{(order.final_amount || order.total_amount).toFixed(2)}</span>
               </div>
             </div>
             <div className="bg-white/60 rounded-3xl p-5 border border-amber-100 text-center shadow-sm">
