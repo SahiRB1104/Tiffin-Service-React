@@ -9,8 +9,6 @@ export const Orders = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [sortOpen, setSortOpen] = useState(false);
 
-  const RECENT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window to flag recent orders
-
   const navigate = useNavigate();
   const sortRef = useRef(null);
 
@@ -46,17 +44,18 @@ export const Orders = () => {
      Assign order numbers (oldest = #1)
      ---------------------------------------- */
   const ordersWithNumbers = useMemo(() => {
-    const now = Date.now();
     const sorted = [...orders].sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
+    
+    // Find the most recent order (last in sorted array)
+    const mostRecentOrderId = sorted.length > 0 ? sorted[sorted.length - 1].order_id : null;
+    
     return sorted.map((order, index) => ({
       ...order,
       orderNumber: index + 1,
-      isRecent:
-        now - new Date((order.created_at || "") + "Z").getTime() <=
-        RECENT_WINDOW_MS,
+      isRecent: order.order_id === mostRecentOrderId, // Only the newest order is marked as recent
     }));
   }, [orders]);
 
@@ -273,8 +272,13 @@ export const Orders = () => {
 
                 <div className="text-right">
                   <span className="text-amber-600 font-bold block text-lg">
-                    ₹{o.total_amount}
+                    ₹{(o.final_amount || o.total_amount).toFixed(2)}
                   </span>
+                  {o.discount_amount > 0 && (
+                    <span className="text-xs text-green-600 font-semibold line-through decoration-green-600">
+                      ₹{o.total_amount}
+                    </span>
+                  )}
                   <div className="flex items-center justify-end gap-2 mt-1">
                     <span
                       className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block ${
