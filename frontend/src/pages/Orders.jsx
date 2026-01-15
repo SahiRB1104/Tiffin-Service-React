@@ -49,13 +49,13 @@ export const Orders = () => {
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
     
-    // Find the most recent order (last in sorted array)
-    const mostRecentOrderId = sorted.length > 0 ? sorted[sorted.length - 1].order_id : null;
+    const now = new Date();
+    const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
     
     return sorted.map((order, index) => ({
       ...order,
       orderNumber: index + 1,
-      isRecent: order.order_id === mostRecentOrderId, // Only the newest order is marked as recent
+      isRecent: new Date(order.created_at) > fifteenMinutesAgo, // Order is recent if created within last 15 minutes
     }));
   }, [orders]);
 
