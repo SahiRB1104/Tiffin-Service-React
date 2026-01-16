@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 
 export const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -88,14 +89,23 @@ export const Signup = () => {
           required
         />
 
-        <input
-          type="password"
-          placeholder="Create Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full px-5 py-4 rounded-xl border bg-slate-50"
-          required
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Create Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-5 py-4 rounded-xl border bg-slate-50"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
 
         <button className="w-full bg-amber-500 text-white py-4 rounded-xl font-bold shadow-lg shadow-amber-200">
           Get Started
@@ -104,9 +114,10 @@ export const Signup = () => {
 
       <button
         onClick={() => navigate("/login")}
-        className="mt-6 text-slate-500 w-full text-center"
+        className="mt-6 text-slate-500 w-full text-center hover:text-amber-500 transition-colors"
       >
-        Already have an account? Login
+        Already have an account?{" "}
+        <span className="font-bold">Login</span>
       </button>
     </div>
   );
