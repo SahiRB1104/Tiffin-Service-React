@@ -134,10 +134,10 @@ export const Orders = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <h2 className="text-3xl font-serif text-slate-900 flex items-center gap-3">
-          <Package className="text-amber-500" /> My Orders
+    <div className="max-w-4xl mx-auto py-8 md:py-12 px-4 md:px-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-3 md:gap-4">
+        <h2 className="text-2xl md:text-3xl font-serif text-slate-900 flex items-center gap-2 md:gap-3">
+          <Package className="text-amber-500 w-6 h-6 md:w-7 md:h-7" /> My Orders
         </h2>
 
         {orders.length > 0 && (
@@ -151,14 +151,14 @@ export const Orders = () => {
               type="button"
               onClick={() => setSortOpen((v) => !v)}
               aria-expanded={sortOpen}
-              className="flex items-center gap-3 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
+              className="flex items-center gap-2 md:gap-3 bg-white px-2.5 md:px-3 py-2 rounded-lg border border-slate-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-200"
             >
-              <ArrowUpDown size={16} className="text-slate-400" />
+              <ArrowUpDown size={14} className="md:w-4 md:h-4 text-slate-400" />
               <div className="flex flex-col items-start">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-slate-400">
                   Sort By
                 </span>
-                <span className="text-xs font-semibold text-slate-800">
+                <span className="text-[11px] md:text-xs font-semibold text-slate-800">
                   {sortOptions.find((o) => o.value === sortBy)?.label}
                 </span>
               </div>
@@ -225,14 +225,14 @@ export const Orders = () => {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center p-20 bg-white rounded-[2rem] border border-dashed border-slate-300 shadow-inner">
-          <Package size={32} className="mx-auto text-slate-300 mb-4" />
-          <p className="text-slate-500 font-medium">
+        <div className="text-center p-12 md:p-20 bg-white rounded-2xl md:rounded-3xl border border-dashed border-slate-300 shadow-inner">
+          <Package size={28} className="md:w-8 md:h-8 mx-auto text-slate-300 mb-3 md:mb-4" />
+          <p className="text-sm md:text-base text-slate-500 font-medium">
             No orders found yet. Time to place your first one!
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {sortedOrders.map((o) => {
             /* 🛡 SAFETY: prevent /orders/undefined */
             if (!o.order_id) return null;
@@ -243,22 +243,22 @@ export const Orders = () => {
                 onClick={() =>
                   navigate(`/dashboard/orders/${o.order_id}`)
                 }
-                className="bg-white p-6 rounded-2xl border border-slate-100 flex justify-between items-center shadow-sm transition-all hover:shadow-md hover:border-amber-100 cursor-pointer"
+                className="bg-white p-4 md:p-6 rounded-xl md:rounded-2xl border border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 md:gap-4 shadow-sm transition-all hover:shadow-md hover:border-amber-100 cursor-pointer"
               >
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-bold text-slate-800 leading-none">
+                  <div className="flex items-center gap-2 mb-0.5 md:mb-1">
+                    <p className="font-bold text-sm md:text-base text-slate-800 leading-none">
                       Order No. {o.orderNumber}
                     </p>
                     {o.isRecent && (
-                      <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded bg-amber-100 text-amber-700 border border-amber-200">
+                      <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded bg-amber-100 text-amber-700 border border-amber-200">
                         Recent
                       </span>
                     )}
                     
                   </div>
 
-                  <p className="text-sm text-slate-500 font-medium">
+                  <p className="text-xs md:text-sm text-slate-500 font-medium">
                     {new Date(o.created_at + "Z").toLocaleString(undefined, {
                       year: "numeric",
                       month: "short",
@@ -270,18 +270,18 @@ export const Orders = () => {
                   </p>
                 </div>
 
-                <div className="text-right">
-                  <span className="text-amber-600 font-bold block text-lg">
+                <div className="text-left sm:text-right w-full sm:w-auto">
+                  <span className="text-amber-600 font-bold block text-base md:text-lg">
                     ₹{(o.final_amount || o.total_amount).toFixed(2)}
                   </span>
                   {o.discount_amount > 0 && (
-                    <span className="text-xs text-green-600 font-semibold line-through decoration-green-600">
+                    <span className="text-[10px] md:text-xs text-green-600 font-semibold line-through decoration-green-600">
                       ₹{o.total_amount}
                     </span>
                   )}
-                  <div className="flex items-center justify-end gap-2 mt-1">
+                  <div className="flex items-center justify-start sm:justify-end gap-2 mt-1">
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded inline-block ${
+                      className={`text-[9px] md:text-[10px] font-bold uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded inline-block ${
                         o.status === "PLACED"
                           ? "bg-blue-50 text-blue-600"
                           : o.status === "PREPARING"
