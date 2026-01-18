@@ -255,14 +255,14 @@ export const Address = () => {
 
   /* ==================== MAIN UI ==================== */
   return (
-    <div className="max-w-4xl mx-auto py-12 px-6">
+    <div className="max-w-3xl mx-auto py-8 px-4 md:px-6">
       {!showForm && (
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
-            <h2 className="text-4xl font-serif text-slate-900">
+            <h2 className="text-2xl md:text-3xl font-serif text-slate-900">
               Saved Addresses
             </h2>
-            <p className="text-slate-500 mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               Manage your delivery locations
             </p>
           </div>
@@ -271,18 +271,18 @@ export const Address = () => {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-amber-200 transition-all hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-amber-200 transition-all hover:scale-105 active:scale-95 text-sm"
           >
-            <Plus size={20} strokeWidth={3} /> Add New
+            <Plus size={18} strokeWidth={3} /> Add New
           </button>
         </div>
       )}
 
       {/* ==================== FORM VIEW ==================== */}
       {showForm ? (
-        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-2xl animate-in fade-in zoom-in-95 duration-300 relative">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-bold text-slate-800 tracking-tight">
+        <div className="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-xl animate-in fade-in zoom-in-95 duration-300 relative">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">
               {editingId ? "Edit Address" : "Add New Address"}
             </h3>
             <button
@@ -296,19 +296,19 @@ export const Address = () => {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6">
             {/* ADDRESS LABEL */}
             <div>
-              <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-4">
+              <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-3">
                 Address Label
               </label>
-              <div className="flex gap-4">
+              <div className="flex gap-3">
                 {["Home", "Work", "Other"].map((l) => (
                   <button
                     key={l}
                     type="button"
                     onClick={() => setFormData({ ...formData, label: l })}
-                    className={`px-8 py-3 rounded-2xl text-sm font-bold transition-all duration-300 border-2 ${
+                    className={`flex-1 px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 border-2 ${
                       formData.label === l
                         ? "bg-amber-500 border-amber-500 text-white shadow-[0_10px_20px_-5px_rgba(245,158,11,0.4)]"
                         : "bg-slate-50 border-transparent text-slate-400 hover:bg-slate-100"
@@ -322,7 +322,7 @@ export const Address = () => {
 
             {/* FULL ADDRESS WITH LOCATION DETECTION */}
             <div className="relative">
-              <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-4">
+              <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-3">
                 Full Address
               </label>
               <div className="relative group">
@@ -331,7 +331,7 @@ export const Address = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, addressLine: e.target.value })
                   }
-                  className="w-full px-6 py-6 rounded-3xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 focus:shadow-inner outline-none transition-all min-h-[160px] text-slate-700 font-medium placeholder:text-slate-300"
+                  className="w-full px-4 md:px-5 py-4 md:py-5 rounded-2xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 focus:shadow-inner outline-none transition-all min-h-[120px] md:min-h-[140px] text-sm md:text-base text-slate-700 font-medium placeholder:text-slate-300"
                   placeholder="Street, Building, Apartment..."
                   required
                 />
@@ -339,22 +339,22 @@ export const Address = () => {
                   type="button"
                   onClick={handleDetectLocation}
                   disabled={detecting}
-                  className="absolute bottom-6 right-6 flex items-center gap-2 text-amber-600 bg-amber-50/80 backdrop-blur-sm px-5 py-2.5 rounded-2xl border border-amber-100 text-xs font-bold shadow-sm hover:bg-amber-500 hover:text-white transition-all disabled:opacity-50"
+                  className="absolute bottom-3 right-3 flex items-center gap-1.5 text-amber-600 bg-amber-50/80 backdrop-blur-sm px-3 py-2 rounded-xl border border-amber-100 text-[10px] md:text-xs font-bold shadow-sm hover:bg-amber-500 hover:text-white transition-all disabled:opacity-50"
                 >
                   {detecting ? (
-                    <Loader2 size={16} className="animate-spin" />
+                    <Loader2 size={14} className="animate-spin" />
                   ) : (
-                    <Navigation size={16} />
+                    <Navigation size={14} />
                   )}
-                  {detecting ? "Fetching..." : "Use Current Location"}
+                  <span className="hidden sm:inline">{detecting ? "Fetching..." : "Use Location"}</span>
                 </button>
               </div>
             </div>
 
             {/* FIELD GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-3">
+                <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-2">
                   City
                 </label>
                 <input
@@ -363,13 +363,13 @@ export const Address = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, city: e.target.value })
                   }
-                  className="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 outline-none text-slate-700 font-medium"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 outline-none text-sm text-slate-700 font-medium"
                   placeholder="Ex: Gurgaon"
                   required
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-3">
+                <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-2">
                   State
                 </label>
                 <input
@@ -378,13 +378,13 @@ export const Address = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, state: e.target.value })
                   }
-                  className="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 outline-none text-slate-700 font-medium"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 outline-none text-sm text-slate-700 font-medium"
                   placeholder="Ex: Haryana"
                   required
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-3">
+                <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 mb-2">
                   Pincode
                 </label>
                 <input
@@ -393,7 +393,7 @@ export const Address = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, pincode: e.target.value })
                   }
-                  className="w-full px-6 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 outline-none text-slate-700 font-medium"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-50 bg-slate-50/50 focus:bg-white focus:border-amber-100 outline-none text-sm text-slate-700 font-medium"
                   placeholder="Ex: 122003"
                   required
                 />
@@ -425,10 +425,10 @@ export const Address = () => {
             </label>
 
             {/* ACTION FOOTER */}
-            <div className="flex items-center gap-6 pt-10 border-t border-slate-50">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-slate-50">
               <button
                 type="submit"
-                className="flex-1 bg-slate-900 text-white py-5 rounded-[1.5rem] font-bold text-lg shadow-2xl shadow-slate-200 hover:bg-slate-800 hover:-translate-y-1 transition-all active:scale-95"
+                className="flex-1 bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base shadow-xl shadow-slate-200 hover:bg-slate-800 hover:-translate-y-0.5 transition-all active:scale-95"
               >
                 {editingId ? "Update Address" : "Save Address"}
               </button>
@@ -438,7 +438,7 @@ export const Address = () => {
                   setShowForm(false);
                   setEditingId(null);
                 }}
-                className="px-10 py-5 text-slate-400 font-bold hover:text-slate-900 transition-all rounded-[1.5rem] hover:bg-slate-50"
+                className="sm:px-8 py-3.5 text-slate-400 font-bold hover:text-slate-900 transition-all rounded-xl hover:bg-slate-50"
               >
                 Cancel
               </button>
@@ -480,7 +480,7 @@ export const Address = () => {
             addresses.map((addr) => (
               <div
                 key={addr._id || addr.id}
-                className={`bg-white p-10 rounded-[2.5rem] border-2 transition-all duration-500 group relative ${
+                className={`bg-white p-6 md:p-8 rounded-2xl md:rounded-3xl border-2 transition-all duration-500 group relative ${
                   addr.isDefault
                     ? "border-amber-500 shadow-[0_20px_50px_-20px_rgba(245,158,11,0.15)] ring-4 ring-amber-50"
                     : "border-slate-50 hover:border-amber-100 shadow-sm"
