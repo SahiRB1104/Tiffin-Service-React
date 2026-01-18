@@ -118,41 +118,41 @@ export const Payment = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-6">
+    <div className="max-w-6xl mx-auto py-8 md:py-12 px-4 md:px-6">
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 flex items-center gap-2">
-          <AlertCircle size={18} /> {error}
+        <div className="mb-5 md:mb-6 p-3 md:p-4 bg-red-50 border border-red-100 rounded-xl text-sm md:text-base text-red-600 flex items-center gap-2">
+          <AlertCircle size={16} className="shrink-0" /> {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
         {/* LEFT COLUMN: Address + Order Summary (shown at bottom on mobile) */}
-        <div className="order-2 md:order-1">
+        <div className="order-2 lg:order-1">
           {/* DELIVERY ADDRESS SECTION */}
-          <section className="mb-8">
-            <div className="flex justify-between items-end mb-6">
-              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Deliver to</h2>
+          <section className="mb-6 md:mb-8">
+            <div className="flex justify-between items-end mb-4 md:mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Deliver to</h2>
               <button 
                 onClick={() => navigate("/dashboard/address")}
-                className="text-amber-500 font-bold text-sm hover:underline flex items-center gap-1"
+                className="text-amber-500 font-bold text-xs md:text-sm hover:underline flex items-center gap-1"
               >
-                Change <ChevronRight size={14} />
+                Change <ChevronRight size={12} className="md:w-3.5 md:h-3.5" />
               </button>
             </div>
             
             {loading ? (
-              <div className="h-32 bg-slate-100 animate-pulse rounded-[2rem]"></div>
+              <div className="h-28 md:h-32 bg-slate-100 animate-pulse rounded-2xl md:rounded-3xl"></div>
             ) : defaultAddress ? (
-              <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm flex items-start gap-5 group transition-all hover:border-amber-100">
-                <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 shrink-0 shadow-sm">
-                  <MapPin size={28} />
+              <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm flex items-start gap-4 md:gap-5 group transition-all hover:border-amber-100">
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-50 rounded-xl md:rounded-2xl flex items-center justify-center text-amber-500 shrink-0 shadow-sm">
+                  <MapPin size={22} className="md:w-7 md:h-7" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-bold text-slate-900 text-xl">{defaultAddress.label}</h3>
-                    <span className="text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 px-2 py-1 rounded">DEFAULT</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 md:gap-3 mb-1">
+                    <h3 className="font-bold text-slate-900 text-base md:text-xl truncate">{defaultAddress.label}</h3>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 px-1.5 md:px-2 py-0.5 md:py-1 rounded shrink-0">DEFAULT</span>
                   </div>
-                  <p className="text-slate-500 leading-relaxed font-medium">
+                  <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-medium">
                     {defaultAddress.addressLine}<br />
                     {defaultAddress.city}, {defaultAddress.state} - {defaultAddress.pincode}
                   </p>
@@ -167,10 +167,10 @@ export const Payment = () => {
           </section>
 
           {/* ORDER SUMMARY SECTION */}
-          <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl">
-            <h3 className="text-xl font-bold mb-6 text-slate-800">Order Summary</h3>
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between text-slate-500">
+          <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-slate-100 shadow-xl">
+            <h3 className="text-lg md:text-xl font-bold mb-5 md:mb-6 text-slate-800">Order Summary</h3>
+            <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+              <div className="flex justify-between text-sm md:text-base text-slate-500">
                 <span>Item Total</span>
                 <span>₹{total}</span>
               </div>
@@ -197,7 +197,7 @@ export const Payment = () => {
             <button
               onClick={handlePayment}
               disabled={loading}
-              className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-slate-900 text-white py-3.5 md:py-4 rounded-xl md:rounded-2xl font-bold text-sm md:text-base hover:bg-slate-800 shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Processing..." : "Pay & Place Order"}
             </button>
@@ -205,9 +205,9 @@ export const Payment = () => {
         </div>
 
         {/* RIGHT COLUMN: Payment + Offers (shown at top on mobile) */}
-        <div className="order-1 md:order-2">
-          <h2 className="text-3xl font-serif mb-8 text-slate-900">Payment Methods</h2>
-          <div className="space-y-4 mb-8">
+        <div className="order-1 lg:order-2">
+          <h2 className="text-2xl md:text-3xl font-serif mb-5 md:mb-8 text-slate-900">Payment Methods</h2>
+          <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
             {[
               { id: "card", label: "Credit / Debit Card", icon: <CreditCard /> },
               { id: "upi", label: "UPI / Google Pay", icon: <Wallet /> },
@@ -216,7 +216,7 @@ export const Payment = () => {
             ].map((m) => (
               <label
                 key={m.id}
-                className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+                className={`flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl md:rounded-2xl border-2 cursor-pointer transition-all ${
                   method === m.id
                     ? "border-amber-500 bg-amber-50"
                     : "border-slate-100 hover:border-slate-200"
@@ -230,48 +230,48 @@ export const Payment = () => {
                   onChange={() => setMethod(m.id)}
                 />
                 <div
-                  className={`p-2 rounded-lg ${
+                  className={`p-2 rounded-lg shrink-0 ${
                     method === m.id
                       ? "bg-amber-500 text-white"
                       : "bg-slate-100 text-slate-400"
                   }`}
                 >
-                  {m.icon}
+                  {React.cloneElement(m.icon, { size: 18 })}
                 </div>
-                <span className="font-bold text-slate-700">{m.label}</span>
+                <span className="font-bold text-sm md:text-base text-slate-700">{m.label}</span>
                 {method === m.id && (
-                  <CheckCircle className="ml-auto text-amber-500" size={20} />
+                  <CheckCircle className="ml-auto text-amber-500 shrink-0" size={18} />
                 )}
               </label>
             ))}
           </div>
 
           {/* OFFERS AND COUPON SECTION */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-[2rem] border border-amber-100 mb-6">
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-5 md:p-6 rounded-2xl md:rounded-3xl border border-amber-100 mb-5 md:mb-6">
             {/* COLLAPSIBLE OFFERS HEADER */}
             <button
               onClick={() => setOffersExpanded(!offersExpanded)}
-              className="w-full flex items-center justify-between p-4 mb-4 bg-white rounded-xl border border-amber-200 hover:bg-amber-50 transition-all"
+              className="w-full flex items-center justify-between p-3 md:p-4 mb-3 md:mb-4 bg-white rounded-xl border border-amber-200 hover:bg-amber-50 transition-all"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                  <Gift className="text-amber-600" size={20} />
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="w-9 h-9 md:w-10 md:h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                  <Gift className="text-amber-600" size={18} />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-2">
                     Available Offers
-                    <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-[10px] md:text-xs bg-amber-500 text-white px-1.5 md:px-2 py-0.5 rounded-full font-bold">
                       {offers.length}
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-500">Click to view all offers</p>
+                  <p className="text-[10px] md:text-xs text-slate-500">Click to view all offers</p>
                 </div>
               </div>
               <div className="shrink-0">
                 {offersExpanded ? (
-                  <ChevronUp className="text-amber-600" size={20} />
+                  <ChevronUp className="text-amber-600" size={18} />
                 ) : (
-                  <ChevronDown className="text-amber-600" size={20} />
+                  <ChevronDown className="text-amber-600" size={18} />
                 )}
               </div>
             </button>
