@@ -1,9 +1,16 @@
 import React from "react";
 import { Plus } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useToast } from "../context/ToastContext";
 
 export const FoodCard = ({ item }) => {
   const { addToCart } = useCart();
+  const { showToast } = useToast();
+
+  const handleAddToCart = () => {
+    addToCart(item);
+    showToast(item.name, 1);
+  };
 
   return (
     <div className="group bg-slate-50 rounded-3xl overflow-hidden border border-slate-100 transition-all hover:shadow-2xl hover:shadow-slate-200 hover:-translate-y-1">
@@ -36,7 +43,7 @@ export const FoodCard = ({ item }) => {
         </p>
 
         <button
-          onClick={() => addToCart(item)}
+          onClick={handleAddToCart}
           className="w-full bg-white text-slate-800 border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2"
         >
           <Plus size={18} /> Add to Cart
