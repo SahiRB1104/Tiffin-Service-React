@@ -17,6 +17,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Sync state when localStorage changes
+    const handleStorageChange = () => {
+      const newToken = localStorage.getItem("access_token");
+      setToken(newToken);
+      if (!newToken) {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  useEffect(() => {
     if (!token) {
       setLoading(false);
       return;
@@ -26,10 +40,15 @@ export const AuthProvider = ({ children }) => {
       try {
         const data = await api.get("/user/profile");
         setUser(data);
-      } catch {
-        handleLocalLogout();
-      } finally {
         setLoading(false);
+      } catch (error) {
+        // Only logout on 401 (unauthorized), not on other errors
+        if (error?.response?.status === 401) {
+          handleLocalLogout();
+        } else {
+          // For other errors, keep token but don't load user data
+          setLoading(false);
+        }
       }
     };
 
@@ -49,6 +68,8 @@ export const AuthProvider = ({ children }) => {
 
   const handleLocalLogout = () => {
     localStorage.removeItem("access_token");
+    // Clear cart data on logout
+    localStorage.removeItem("cartData");
     setToken(null);
     setUser(null);
     setLoading(false);

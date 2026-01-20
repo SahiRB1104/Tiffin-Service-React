@@ -9,8 +9,13 @@ export const Header = ({ onOpenCart }) => {
   const { pathname } = useLocation();
 
   const { isAuthenticated, logout, user } = useAuth();
-  const { cart } = useCart();
+  const { cart, clearCart } = useCart();
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
+
+  const handleLogout = async () => {
+    clearCart();
+    await logout();
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200">
@@ -88,7 +93,7 @@ export const Header = ({ onOpenCart }) => {
                 Hi, {user?.email?.split("@")[0]}
               </span>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="p-2 text-slate-500 hover:text-red-500 transition-colors"
               >
                 <LogOut size={20} />
