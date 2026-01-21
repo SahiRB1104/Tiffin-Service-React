@@ -255,7 +255,7 @@ export const Address = () => {
 
   /* ==================== MAIN UI ==================== */
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 md:px-6">
+    <div className="max-w-6xl mx-auto py-8 px-4 md:px-6">
       {!showForm && (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
@@ -480,18 +480,12 @@ export const Address = () => {
             addresses.map((addr) => (
               <div
                 key={addr._id || addr.id}
-                className={`bg-white p-5 md:p-6 rounded-2xl border-2 transition-all duration-500 group relative ${
+                className={`bg-white p-5 md:p-6 rounded-2xl border-2 transition-all duration-500 group ${
                   addr.isDefault
                     ? "border-amber-500 shadow-[0_20px_50px_-20px_rgba(245,158,11,0.15)] ring-4 ring-amber-50"
                     : "border-slate-50 hover:border-amber-100 shadow-sm"
                 }`}
               >
-                {addr.isDefault && (
-                  <div className="absolute top-5 right-5 text-[9px] font-black tracking-[0.2em] text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
-                    DEFAULT
-                  </div>
-                )}
-
                 <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                   <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
@@ -504,9 +498,16 @@ export const Address = () => {
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-slate-900 text-base mb-1">
-                      {addr.label}
-                    </h4>
+                    <div className="flex items-center gap-2 mb-1">
+                      {addr.isDefault && (
+                        <span className="text-[9px] font-black tracking-[0.15em] text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+                          DEFAULT
+                        </span>
+                      )}
+                      <h4 className="font-bold text-slate-900 text-base">
+                        {addr.label}
+                      </h4>
+                    </div>
                     <p className="text-slate-500 text-xs font-medium truncate">
                       {addr.addressLine}, {addr.city}, {addr.state} - {addr.pincode}
                     </p>
