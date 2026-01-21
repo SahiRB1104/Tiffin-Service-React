@@ -109,7 +109,7 @@ export const OrderDetails = () => {
   /* ---------------- LOADING ---------------- */
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-6 animate-pulse">
+      <div className="max-w-6xl mx-auto py-12 px-6 animate-pulse">
         <div className="h-8 w-32 bg-slate-200 rounded mb-8"></div>
         <div className="h-48 bg-white rounded-3xl mb-6"></div>
         <div className="h-64 bg-white rounded-3xl"></div>
@@ -120,7 +120,7 @@ export const OrderDetails = () => {
   /* ---------------- NOT FOUND ---------------- */
   if (!order) {
     return (
-      <div className="max-w-4xl mx-auto py-20 px-6 text-center">
+      <div className="max-w-6xl mx-auto py-20 px-6 text-center">
         <AlertCircle size={48} className="mx-auto text-slate-300 mb-4" />
         <h2 className="text-2xl font-bold text-slate-800">
           Order Not Found

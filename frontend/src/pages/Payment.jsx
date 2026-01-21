@@ -149,8 +149,8 @@ export const Payment = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 md:gap-3 mb-1">
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 px-1.5 md:px-2 py-0.5 md:py-1 rounded shrink-0">DEFAULT</span>
                     <h3 className="font-bold text-slate-900 text-base md:text-xl truncate">{defaultAddress.label}</h3>
-                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 px-1.5 md:px-2 py-0.5 md:py-1 rounded shrink-0">DEFAULT</span>
                   </div>
                   <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-medium">
                     {defaultAddress.addressLine}<br />

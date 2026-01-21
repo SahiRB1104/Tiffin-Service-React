@@ -149,7 +149,7 @@ export const Profile = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8 md:py-12 px-4 md:px-6">
+    <div className="max-w-6xl mx-auto py-8 md:py-12 px-4 md:px-6">
       <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-xl border border-slate-100 overflow-hidden relative">
         <div className="absolute top-0 left-0 right-0 h-24 md:h-32 bg-amber-500"></div>
         <div className="relative pt-8 md:pt-12">

@@ -119,7 +119,7 @@ export const Orders = () => {
      ---------------------------------------- */
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-6">
+      <div className="max-w-6xl mx-auto py-12 px-6">
         <div className="h-8 w-48 bg-slate-200 animate-pulse rounded-lg mb-8"></div>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -134,7 +134,7 @@ export const Orders = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 md:py-12 px-4 md:px-6">
+    <div className="max-w-6xl mx-auto py-8 md:py-12 px-4 md:px-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-3 md:gap-4">
         <h2 className="text-2xl md:text-3xl font-serif text-slate-900 flex items-center gap-2 md:gap-3">
           <Package className="text-amber-500 w-6 h-6 md:w-7 md:h-7" /> My Orders

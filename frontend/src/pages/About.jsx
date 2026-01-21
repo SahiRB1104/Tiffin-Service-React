@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const About = () => (
-  <div className="max-w-4xl mx-auto py-12 px-6">
+  <div className="max-w-6xl mx-auto py-12 px-6">
     <h1 className="text-4xl font-serif mb-8 text-slate-900">About SB Tiffin</h1>
     <div className="prose prose-slate lg:prose-lg">
       <p className="text-lg text-slate-600 leading-relaxed mb-6">
