@@ -447,12 +447,12 @@ export const Address = () => {
         </div>
       ) : (
         /* ==================== LIST VIEW ==================== */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-4">
           {loading ? (
             [1, 2].map((i) => (
               <div
                 key={i}
-                className="h-48 bg-slate-100 animate-pulse rounded-[2.5rem]"
+                className="h-20 bg-slate-100 animate-pulse rounded-2xl"
               />
             ))
           ) : addresses.length === 0 ? (
@@ -480,54 +480,53 @@ export const Address = () => {
             addresses.map((addr) => (
               <div
                 key={addr._id || addr.id}
-                className={`bg-white p-6 md:p-8 rounded-2xl md:rounded-3xl border-2 transition-all duration-500 group relative ${
+                className={`bg-white p-5 md:p-6 rounded-2xl border-2 transition-all duration-500 group relative ${
                   addr.isDefault
                     ? "border-amber-500 shadow-[0_20px_50px_-20px_rgba(245,158,11,0.15)] ring-4 ring-amber-50"
                     : "border-slate-50 hover:border-amber-100 shadow-sm"
                 }`}
               >
                 {addr.isDefault && (
-                  <div className="absolute top-8 right-8 text-[9px] font-black tracking-[0.2em] text-amber-600 bg-amber-50 px-4 py-1.5 rounded-full">
+                  <div className="absolute top-5 right-5 text-[9px] font-black tracking-[0.2em] text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
                     DEFAULT
                   </div>
                 )}
 
-                <div className="flex items-start gap-6">
+                <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                   <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                       addr.isDefault
                         ? "bg-amber-500 text-white"
                         : "bg-slate-50 text-slate-300 group-hover:bg-amber-50 group-hover:text-amber-500"
                     }`}
                   >
-                    <MapPin size={28} />
+                    <MapPin size={24} />
                   </div>
-                  <div className="flex-1 pr-12">
-                    <h4 className="font-bold text-slate-900 text-xl mb-2">
+                  
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-slate-900 text-base mb-1">
                       {addr.label}
                     </h4>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-6 font-medium">
-                      {addr.addressLine}
-                      <br />
-                      {addr.city}, {addr.state} - {addr.pincode}
+                    <p className="text-slate-500 text-xs font-medium truncate">
+                      {addr.addressLine}, {addr.city}, {addr.state} - {addr.pincode}
                     </p>
+                  </div>
 
-                    <div className="flex items-center gap-6">
-                      <button
-                        onClick={() => handleEdit(addr)}
-                        className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors"
-                      >
-                        <Edit2 size={14} /> Edit
-                      </button>
-                      <button
-                        onClick={() =>
-                          openDeleteModal(addr._id || addr.id, addr.label)
-                        }
-                        className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 size={14} /> Delete
-                      </button>
-                    </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      onClick={() => handleEdit(addr)}
+                      className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors"
+                    >
+                      <Edit2 size={14} /> Edit
+                    </button>
+                    <button
+                      onClick={() =>
+                        openDeleteModal(addr._id || addr.id, addr.label)
+                      }
+                      className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
                   </div>
                 </div>
               </div>
