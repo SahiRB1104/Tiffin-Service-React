@@ -55,7 +55,7 @@ export const Review = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-6">
+    <div className="max-w-3xl mx-auto py-12 px-6">
       <h2 className="text-3xl font-serif mb-8 text-slate-900 text-center">
         Share Your Feedback
       </h2>
