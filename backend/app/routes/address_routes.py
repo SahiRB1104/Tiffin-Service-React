@@ -17,6 +17,8 @@ async def get_addresses(user=Depends(get_current_user)):
         return cached
     
     addresses = list(collection.find({"user_email": user["email"]}, {"_id": 0}))
+    # Sort addresses: default first, then by label
+    addresses.sort(key=lambda x: (not x.get('isDefault', False), x.get('label', '')))
     set_cache(cache_key, addresses, expire_time=600)
     return addresses
 
@@ -42,10 +44,14 @@ async def get_default_address(user=Depends(get_current_user)):
 
 @router.post("/")
 async def add_address(data: dict, user=Depends(get_current_user)):
-    if data.get("is_default"):
+    # Normalize isDefault field (handle both isDefault and is_default)
+    is_default = data.get("isDefault", data.get("is_default", False))
+    
+    # If this address is being set as default, remove default from all other addresses
+    if is_default:
         collection.update_many(
             {"user_email": user["email"]},
-            {"$set": {"is_default": False}}
+            {"$set": {"isDefault": False}}
         )
 
     address = {
@@ -56,7 +62,7 @@ async def add_address(data: dict, user=Depends(get_current_user)):
         "city": data.get("city", ""),
         "state": data.get("state", ""),
         "pincode": data.get("pincode", ""),
-        "isDefault": data.get("isDefault", False),
+        "isDefault": is_default,
     }
 
     result = collection.insert_one(address)
@@ -70,9 +76,13 @@ async def add_address(data: dict, user=Depends(get_current_user)):
 
 @router.put("/{address_id}")
 async def update_address(address_id: str, data: dict, user=Depends(get_current_user)):
-    if data.get("isDefault"):
+    # Normalize isDefault field
+    is_default = data.get("isDefault", data.get("is_default", False))
+    
+    # If this address is being set as default, remove default from all other addresses first
+    if is_default:
         collection.update_many(
-            {"user_email": user["email"]},
+            {"user_email": user["email"], "id": {"$ne": address_id}},
             {"$set": {"isDefault": False}}
         )
 
@@ -82,7 +92,7 @@ async def update_address(address_id: str, data: dict, user=Depends(get_current_u
         "city": data.get("city"),
         "state": data.get("state"),
         "pincode": data.get("pincode"),
-        "isDefault": data.get("isDefault", False),
+        "isDefault": is_default,
     }
 
     res = collection.update_one(
