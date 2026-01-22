@@ -110,7 +110,7 @@ export const Menu = () => {
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16">
+    <div className="max-w-7.5xl mx-auto px-6 py-16">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
         <h1 className="text-4xl font-serif flex items-center gap-3">
