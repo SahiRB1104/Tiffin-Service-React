@@ -118,7 +118,7 @@ export const Payment = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 md:py-12 px-4 md:px-6">
+    <div className="max-w-7.5xl mx-auto py-8 md:py-12 px-4 md:px-6">
       {error && (
         <div className="mb-5 md:mb-6 p-3 md:p-4 bg-red-50 border border-red-100 rounded-xl text-sm md:text-base text-red-600 flex items-center gap-2">
           <AlertCircle size={16} className="shrink-0" /> {error}
