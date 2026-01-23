@@ -118,96 +118,57 @@ export const Payment = () => {
   };
 
   return (
-    <div className="max-w-7.5xl mx-auto py-8 md:py-12 px-4 md:px-6">
+    <div className="max-w-7.5xl mx-auto py-5 px-5 min-h-screen">
       {error && (
-        <div className="mb-5 md:mb-6 p-3 md:p-4 bg-red-50 border border-red-100 rounded-xl text-sm md:text-base text-red-600 flex items-center gap-2">
-          <AlertCircle size={16} className="shrink-0" /> {error}
+        <div className="mb-3 p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600 flex items-center gap-2">
+          <AlertCircle size={18} className="shrink-0" /> {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
-        {/* LEFT COLUMN: Address + Order Summary (shown at bottom on mobile) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+        {/* LEFT COLUMN: Deliver to + Payment Methods */}
         <div className="order-2 lg:order-1">
           {/* DELIVERY ADDRESS SECTION */}
-          <section className="mb-6 md:mb-8">
-            <div className="flex justify-between items-end mb-4 md:mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Deliver to</h2>
+          <section className="mb-5">
+            <div className="flex justify-between items-end mb-3.5">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Deliver to</h2>
               <button 
                 onClick={() => navigate("/dashboard/address")}
-                className="text-amber-500 font-bold text-xs md:text-sm hover:underline flex items-center gap-1"
+                className="text-amber-500 font-bold text-base hover:underline flex items-center gap-1.5"
               >
-                Change <ChevronRight size={12} className="md:w-3.5 md:h-3.5" />
+                Change <ChevronRight size={16} className="md:w-4 md:h-4" />
               </button>
             </div>
             
             {loading ? (
-              <div className="h-28 md:h-32 bg-slate-100 animate-pulse rounded-2xl md:rounded-3xl"></div>
+              <div className="h-24 bg-slate-100 animate-pulse rounded-xl"></div>
             ) : defaultAddress ? (
-              <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm flex items-start gap-4 md:gap-5 group transition-all hover:border-amber-100">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-amber-50 rounded-xl md:rounded-2xl flex items-center justify-center text-amber-500 shrink-0 shadow-sm">
-                  <MapPin size={22} className="md:w-7 md:h-7" />
+              <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex items-start gap-4 group transition-all hover:border-amber-100">
+                <div className="w-14 h-14 bg-amber-50 rounded-lg flex items-center justify-center text-amber-500 shrink-0 shadow-sm">
+                  <MapPin size={22} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 md:gap-3 mb-1">
-                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 px-1.5 md:px-2 py-0.5 md:py-1 rounded shrink-0">DEFAULT</span>
-                    <h3 className="font-bold text-slate-900 text-base md:text-xl truncate">{defaultAddress.label}</h3>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded shrink-0">DEFAULT</span>
+                    <h3 className="font-bold text-slate-900 text-lg truncate">{defaultAddress.label}</h3>
                   </div>
-                  <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-medium">
+                  <p className="text-base text-slate-600 leading-snug font-medium">
                     {defaultAddress.addressLine}<br />
                     {defaultAddress.city}, {defaultAddress.state} - {defaultAddress.pincode}
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="bg-amber-50 border border-amber-100 p-8 rounded-[2rem] flex items-center gap-4 text-amber-800">
-                <AlertCircle />
-                <p className="font-bold">No delivery address found. Please add one in your profile.</p>
+              <div className="bg-amber-50 border border-amber-100 p-5 rounded-xl flex items-center gap-3 text-amber-800">
+                <AlertCircle size={20} />
+                <p className="font-bold text-base">No delivery address found. Please add one in your profile.</p>
               </div>
             )}
           </section>
 
-          {/* ORDER SUMMARY SECTION */}
-          <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl border border-slate-100 shadow-xl">
-            <h3 className="text-lg md:text-xl font-bold mb-5 md:mb-6 text-slate-800">Order Summary</h3>
-            <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
-              <div className="flex justify-between text-sm md:text-base text-slate-500">
-                <span>Item Total</span>
-                <span>₹{total}</span>
-              </div>
-              <div className="flex justify-between text-slate-500">
-                <span>Delivery Fee</span>
-                <span className="text-green-600 font-bold">FREE</span>
-              </div>
-              
-              {appliedCoupon && (
-                <div className="flex justify-between text-green-600 font-semibold border-t border-slate-100 pt-4">
-                  <div className="flex items-center gap-2">
-                    <Tag size={16} />
-                    <span>Discount ({appliedCoupon})</span>
-                  </div>
-                  <span>-₹{discount.toFixed(2)}</span>
-                </div>
-              )}
-              
-              <div className="border-t border-slate-100 pt-4 flex justify-between text-xl font-bold text-slate-900">
-                <span>Total Pay</span>
-                <span className="text-amber-500">₹{finalTotal.toFixed(2)}</span>
-              </div>
-            </div>
-            <button
-              onClick={handlePayment}
-              disabled={loading}
-              className="w-full bg-slate-900 text-white py-3.5 md:py-4 rounded-xl md:rounded-2xl font-bold text-sm md:text-base hover:bg-slate-800 shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Processing..." : "Pay & Place Order"}
-            </button>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: Payment + Offers (shown at top on mobile) */}
-        <div className="order-1 lg:order-2">
-          <h2 className="text-2xl md:text-3xl font-serif mb-5 md:mb-8 text-slate-900">Payment Methods</h2>
-          <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+          {/* PAYMENT METHODS SECTION */}
+          <h2 className="text-2xl font-serif mb-3.5 text-slate-900">Payment Methods</h2>
+          <div className="space-y-3">
             {[
               { id: "card", label: "Credit / Debit Card", icon: <CreditCard /> },
               { id: "upi", label: "UPI / Google Pay", icon: <Wallet /> },
@@ -216,7 +177,7 @@ export const Payment = () => {
             ].map((m) => (
               <label
                 key={m.id}
-                className={`flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl md:rounded-2xl border-2 cursor-pointer transition-all ${
+                className={`flex items-center gap-3.5 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
                   method === m.id
                     ? "border-amber-500 bg-amber-50"
                     : "border-slate-100 hover:border-slate-200"
@@ -230,48 +191,51 @@ export const Payment = () => {
                   onChange={() => setMethod(m.id)}
                 />
                 <div
-                  className={`p-2 rounded-lg shrink-0 ${
+                  className={`p-2.5 rounded-md shrink-0 ${
                     method === m.id
                       ? "bg-amber-500 text-white"
                       : "bg-slate-100 text-slate-400"
                   }`}
                 >
-                  {React.cloneElement(m.icon, { size: 18 })}
+                  {React.cloneElement(m.icon, { size: 20 })}
                 </div>
-                <span className="font-bold text-sm md:text-base text-slate-700">{m.label}</span>
+                <span className="font-bold text-base text-slate-700">{m.label}</span>
                 {method === m.id && (
                   <CheckCircle className="ml-auto text-amber-500 shrink-0" size={18} />
                 )}
               </label>
             ))}
           </div>
+        </div>
 
+        {/* RIGHT COLUMN: Offers + Order Summary (shown at top on mobile) */}
+        <div className="order-1 lg:order-2 space-y-5">
           {/* OFFERS AND COUPON SECTION */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-5 md:p-6 rounded-2xl md:rounded-3xl border border-amber-100 mb-5 md:mb-6">
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-5 rounded-xl border border-amber-100">
             {/* COLLAPSIBLE OFFERS HEADER */}
             <button
               onClick={() => setOffersExpanded(!offersExpanded)}
-              className="w-full flex items-center justify-between p-3 md:p-4 mb-3 md:mb-4 bg-white rounded-xl border border-amber-200 hover:bg-amber-50 transition-all"
+              className="w-full flex items-center justify-between p-4 mb-3.5 bg-white rounded-xl border border-amber-200 hover:bg-amber-50 transition-all"
             >
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="w-9 h-9 md:w-10 md:h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                  <Gift className="text-amber-600" size={18} />
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                  <Gift className="text-amber-600" size={20} />
                 </div>
                 <div className="text-left">
-                  <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-2">
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
                     Available Offers
-                    <span className="text-[10px] md:text-xs bg-amber-500 text-white px-1.5 md:px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">
                       {offers.length}
                     </span>
                   </h3>
-                  <p className="text-[10px] md:text-xs text-slate-500">Click to view all offers</p>
+                  <p className="text-[10px] text-slate-500">Click to view</p>
                 </div>
               </div>
               <div className="shrink-0">
                 {offersExpanded ? (
-                  <ChevronUp className="text-amber-600" size={18} />
+                  <ChevronUp className="text-amber-600" size={20} />
                 ) : (
-                  <ChevronDown className="text-amber-600" size={18} />
+                  <ChevronDown className="text-amber-600" size={20} />
                 )}
               </div>
             </button>
@@ -279,29 +243,26 @@ export const Payment = () => {
             {/* COLLAPSIBLE OFFERS DRAWER */}
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                offersExpanded ? "max-h-[600px] opacity-100 mb-6" : "max-h-0 opacity-0"
+                offersExpanded ? "max-h-[400px] opacity-100 mb-4" : "max-h-0 opacity-0"
               }`}
             >
-              <div className="space-y-3 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+              <div className="space-y-3 overflow-y-auto max-h-[330px] pr-3 custom-scrollbar">
                 {offers.map((offer) => (
                   <div
                     key={offer.name}
-                    className="bg-white p-4 rounded-xl border border-amber-200 flex justify-between items-center hover:shadow-md transition-all"
+                    className="bg-white p-3 rounded-lg border border-amber-200 flex justify-between items-center hover:shadow-md transition-all gap-3"
                   >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-mono font-bold text-amber-600 text-sm bg-amber-100 px-2 py-1 rounded">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="font-mono font-bold text-amber-600 text-[12px] bg-amber-100 px-2.5 py-0.5 rounded">
                           {offer.name}
                         </span>
                       </div>
-                      <p className="text-slate-600 text-sm">{offer.description}</p>
-                      <p className="text-xs text-slate-400 mt-1">
-                        Min order: ₹{offer.min_order}
-                      </p>
+                      <p className="text-slate-600 text-[12px] line-clamp-1">{offer.description}</p>
                     </div>
                     <button
                       onClick={() => copyCoupon(offer.name)}
-                      className="ml-4 px-4 py-2 bg-amber-500 text-white rounded-lg font-semibold hover:bg-amber-600 transition-all flex items-center gap-2 text-sm shrink-0"
+                      className="px-3 py-1.5 bg-amber-500 text-white rounded-md font-semibold hover:bg-amber-600 transition-all flex items-center gap-1.5 text-[11px] shrink-0"
                     >
                       <Copy size={14} />
                       Copy
@@ -312,27 +273,27 @@ export const Payment = () => {
             </div>
 
             {/* COUPON INPUT */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200">
-              <label className="block text-sm font-bold text-slate-700 mb-3">
-                Have a coupon code?
+            <div className="bg-white p-3 rounded-lg border border-slate-200">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
+                Coupon
               </label>
               
               {appliedCoupon ? (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 p-3 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
-                      <CheckCircle className="text-green-600" size={20} />
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 p-2.5 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 bg-green-100 rounded-md flex items-center justify-center shrink-0">
+                      <CheckCircle className="text-green-600" size={18} />
                     </div>
                     <div>
                       <p className="font-bold text-green-800 text-sm">{appliedCoupon} Applied!</p>
-                      <p className="text-xs text-green-600">You saved ₹{discount.toFixed(2)}</p>
+                      <p className="text-[11px] text-green-600">Saved ₹{discount.toFixed(2)}</p>
                     </div>
                   </div>
                   <button
                     onClick={handleRemoveCoupon}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-100 text-red-500 hover:text-red-700 transition-colors shrink-0"
+                    className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-red-100 text-red-500 hover:text-red-700 transition-colors shrink-0"
                   >
-                    <X size={18} />
+                    <X size={16} />
                   </button>
                 </div>
               ) : (
@@ -342,27 +303,27 @@ export const Payment = () => {
                       type="text"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                      placeholder="Enter coupon code"
-                      className="flex-1 px-3 py-2.5 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-amber-500 font-mono font-bold text-sm"
+                      placeholder="Enter code"
+                      className="flex-1 px-2.5 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-amber-500 font-mono font-bold text-sm"
                     />
                     <button
                       onClick={handleApplyCoupon}
                       disabled={couponLoading}
-                      className="px-5 py-2.5 bg-amber-500 text-white rounded-lg font-bold hover:bg-amber-600 transition-all disabled:opacity-50 text-sm shrink-0"
+                      className="px-3 py-1.5 bg-amber-500 text-white rounded-md font-bold hover:bg-amber-600 transition-all disabled:opacity-50 text-sm shrink-0"
                     >
                       {couponLoading ? "..." : "Apply"}
                     </button>
                   </div>
                   
                   {couponError && (
-                    <div className="mt-3 text-sm text-red-600 flex items-center gap-2">
+                    <div className="mt-2 text-sm text-red-600 flex items-center gap-1">
                       <AlertCircle size={14} />
                       {couponError}
                     </div>
                   )}
                   
                   {couponSuccess && (
-                    <div className="mt-3 text-sm text-green-600 flex items-center gap-2">
+                    <div className="mt-2 text-sm text-green-600 flex items-center gap-1">
                       <CheckCircle size={14} />
                       {couponSuccess}
                     </div>
@@ -370,6 +331,43 @@ export const Payment = () => {
                 </>
               )}
             </div>
+          </div>
+
+          {/* ORDER SUMMARY SECTION */}
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+            <h3 className="text-xl font-bold mb-4 text-slate-900">Order Summary</h3>
+            <div className="space-y-3.5 mb-5">
+              <div className="flex justify-between text-base text-slate-600">
+                <span>Item Total</span>
+                <span>₹{total}</span>
+              </div>
+              <div className="flex justify-between text-base text-slate-600">
+                <span>Delivery</span>
+                <span className="text-green-600 font-bold">FREE</span>
+              </div>
+              
+              {appliedCoupon && (
+                <div className="flex justify-between text-green-600 font-semibold border-t border-slate-100 pt-2.5 text-base">
+                  <div className="flex items-center gap-2">
+                    <Tag size={16} />
+                    <span>Discount</span>
+                  </div>
+                  <span>-₹{discount.toFixed(2)}</span>
+                </div>
+              )}
+              
+              <div className="border-t border-slate-100 pt-2.5 flex justify-between text-2xl font-black text-slate-900">
+                <span>Total</span>
+                <span className="text-amber-500">₹{finalTotal.toFixed(2)}</span>
+              </div>
+            </div>
+            <button
+              onClick={handlePayment}
+              disabled={loading}
+              className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-lg hover:bg-slate-800 shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Processing..." : "Pay & Place Order"}
+            </button>
           </div>
         </div>
       </div>
